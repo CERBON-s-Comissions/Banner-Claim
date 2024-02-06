@@ -16,6 +16,8 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 
+jarJar.enable()
+
 group = mod_group_id
 version = mod_version
 
@@ -75,11 +77,20 @@ mixin {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    implementation jarJar(fg.deobf("curse.maven:cerbons-api-955605:5050080")) {
+        jarJar.ranged(it, "[1.1.0,)")
+    }
 
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
