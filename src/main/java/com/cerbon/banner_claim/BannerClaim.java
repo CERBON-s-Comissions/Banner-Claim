@@ -1,5 +1,8 @@
 package com.cerbon.banner_claim;
 
+import com.cerbon.banner_claim.block.BCBlockEntities;
+import com.cerbon.banner_claim.block.BCBlocks;
+import com.cerbon.banner_claim.item.BCItems;
 import com.cerbon.banner_claim.particle.BCParticles;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -14,6 +17,11 @@ public class BannerClaim {
 
     public BannerClaim() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        BCBlocks.register(modEventBus);
+        BCBlockEntities.register(modEventBus);
+
+        BCItems.register(modEventBus);
 
         BCParticles.register(modEventBus);
     }
