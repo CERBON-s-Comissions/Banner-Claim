@@ -13,6 +13,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +51,12 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof BannerClaimBlockEntity bannerClaimBlockEntity ? bannerClaimBlockEntity.getItem() : super.getCloneItemStack(level, pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
+        return createTickerHelper(blockEntityType, BCBlockEntities.BANNER_CLAIM.get(), BannerClaimBlockEntity::tick);
     }
 
     public ServerPlayer getOwner() {

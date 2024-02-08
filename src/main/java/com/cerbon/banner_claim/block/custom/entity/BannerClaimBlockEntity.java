@@ -5,7 +5,12 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.ChunkCacheBlockEntity;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
+import com.cerbon.banner_claim.particle.BCParticles;
 import com.cerbon.banner_claim.patterns.BCPatterns;
+import com.cerbon.cerbons_api.api.general.particle.ClientParticleBuilder;
+import com.cerbon.cerbons_api.api.static_utilities.RandomUtils;
+import com.cerbon.cerbons_api.api.static_utilities.Vec3Colors;
+import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -16,11 +21,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,5 +202,52 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     public BannerTier getBannerTier() {
         return this.bannerTier;
+    }
+
+    public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity entity) {
+        ChunkCacheBlockEntity.tick(level, pos, state, entity);
+
+        if (level.isClientSide) {
+            AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
+            List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
+
+            for (Player player : playerInBox) {
+                for (double x : List.of(box.minX, box.maxX)) {
+                    double zRand = box.getCenter().z + box.getZsize() * RandomUtils.randDouble(0.5);
+                    Particles.particleFactory.build(randYPos(x, player, zRand), Vec3.ZERO);
+                }
+
+                for (double z : List.of(box.minZ, box.maxZ)) {
+                    double xRand = box.getCenter().x + box.getXsize() * RandomUtils.randDouble(0.5);
+                    Particles.particleFactory.build(randYPos(xRand, player, z), Vec3.ZERO);
+                }
+            }
+        }
+    }
+
+    private static Vec3 randYPos(double x, Player player, double z) {
+        return new Vec3(x, player.getY() + RandomUtils.randDouble(0.5) + 1, z);
+    }
+
+    private static AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
+        return new AABB(pos.x, pos.y, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
+    }
+
+    private static int getBannerTierRange(BannerTier tier) {
+        return switch (tier) {
+            case IRON -> 8;
+            case GOLD -> 16;
+            case EMERALD -> 32;
+            case DIAMOND -> 64;
+            case NETHERITE -> 128;
+        };
+    }
+
+    private static class Particles {
+        private static final ClientParticleBuilder particleFactory = new ClientParticleBuilder(BCParticles.LINE.get())
+                .color(Vec3Colors.GOLD)
+                .brightness(15728880)
+                .colorVariation(0.2)
+                .scale(0.075f);
     }
 }
