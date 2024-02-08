@@ -5,6 +5,7 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.ChunkCacheBlockEntity;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
+import com.cerbon.banner_claim.patterns.BCPatterns;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -138,6 +139,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     public static List<Pair<Holder<BannerPattern>, DyeColor>> createPatterns(@Nullable ListTag listTag) {
         List<Pair<Holder<BannerPattern>, DyeColor>> list = Lists.newArrayList();
+        list.add(Pair.of(BCPatterns.IRON_BANNER_BASE.getHolder().orElseThrow(), DyeColor.WHITE));
 
         if (listTag != null) {
             for(int i = 0; i < listTag.size(); ++i) {

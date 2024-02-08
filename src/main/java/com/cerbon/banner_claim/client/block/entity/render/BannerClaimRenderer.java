@@ -1,10 +1,10 @@
 package com.cerbon.banner_claim.client.block.entity.render;
 
-import com.cerbon.banner_claim.BannerClaim;
 import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.WallBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
+import com.cerbon.banner_claim.patterns.BCPatterns;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
@@ -16,9 +16,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -35,8 +36,6 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
     private final ModelPart flag;
     private final ModelPart pole;
     private final ModelPart bar;
-
-    public static final ResourceLocation IRON_BANNER_BASE = new ResourceLocation(BannerClaim.MOD_ID, "textures/entity/iron_banner_base.png");
 
     public BannerClaimRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart modelpart = context.bakeLayer(ModelLayers.BANNER);
@@ -76,41 +75,44 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
 
         poseStack.pushPose();
         poseStack.scale(f, -f, -f);
-        VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entitySolid(getBannerTierTexture(tier)));
+        VertexConsumer vertexconsumer = ModelBakery.BANNER_BASE.buffer(buffer, RenderType::entitySolid);
         this.pole.render(poseStack, vertexconsumer, packedLight, packedOverlay);
         this.bar.render(poseStack, vertexconsumer, packedLight, packedOverlay);
         BlockPos blockpos = blockEntity.getBlockPos();
         float f2 = ((float)Math.floorMod(blockpos.getX() * 7L + blockpos.getY() * 9L + blockpos.getZ() * 13L + i, 100L) + partialTick) / 100.0F;
         this.flag.xRot = (-0.0125F + 0.01F * Mth.cos(((float)Math.PI * 2F) * f2)) * (float)Math.PI;
         this.flag.y = -32.0F;
-        renderPatterns(poseStack, buffer, packedLight, packedOverlay, this.flag, getBannerTierTexture(tier), true, list);
+        renderPatterns(poseStack, buffer, packedLight, packedOverlay, this.flag, ModelBakery.BANNER_BASE, true, list);
         poseStack.popPose();
         poseStack.popPose();
     }
 
-    public static void renderPatterns(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, ModelPart flagPart, ResourceLocation flagTierTexture, boolean banner, List<Pair<Holder<BannerPattern>, DyeColor>> patterns) {
-        renderPatterns(poseStack, bufferSource, packedLight, packedOverlay, flagPart, flagTierTexture, banner, patterns, false);
+    public static void renderPatterns(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, ModelPart flagPart, Material flagMaterial, boolean banner, List<Pair<Holder<BannerPattern>, DyeColor>> patterns) {
+        renderPatterns(poseStack, bufferSource, packedLight, packedOverlay, flagPart, flagMaterial, banner, patterns, false);
     }
 
-    public static void renderPatterns(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, ModelPart flagPart, ResourceLocation flagTierTexture, boolean banner, List<Pair<Holder<BannerPattern>, DyeColor>> patterns, boolean glint) {
-        flagPart.render(poseStack, bufferSource.getBuffer(RenderType.entitySolid(flagTierTexture)), packedLight, packedOverlay);
+    public static void renderPatterns(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, ModelPart flagPart, Material flagMaterial, boolean banner, List<Pair<Holder<BannerPattern>, DyeColor>> patterns, boolean glint) {
+        flagPart.render(poseStack, flagMaterial.buffer(bufferSource, RenderType::entitySolid), packedLight, packedOverlay);
 
         for(int i = 0; i < 17 && i < patterns.size(); ++i) {
             Pair<Holder<BannerPattern>, DyeColor> pair = patterns.get(i);
             float[] afloat = pair.getSecond().getTextureDiffuseColors();
 
-            pair.getFirst().unwrapKey().map(pattern -> banner ? Sheets.getBannerMaterial(pattern) : Sheets.getShieldMaterial(pattern)).ifPresent(
-                    material -> flagPart.render(poseStack, material.buffer(bufferSource, RenderType::entityNoOutline), packedLight, packedOverlay, afloat[0], afloat[1], afloat[2], 1.0F));
+            if (pair.getFirst().is(BCPatterns.IRON_BANNER_BASE.getHolder().orElseThrow().unwrapKey().orElseThrow()))
+                pair.getFirst().unwrapKey().map(Sheets::getBannerMaterial).ifPresent(material -> flagPart.render(poseStack, material.buffer(bufferSource, RenderType::entityNoOutline), packedLight, packedOverlay));
+            else
+                pair.getFirst().unwrapKey().map(pattern -> banner ? Sheets.getBannerMaterial(pattern) : Sheets.getShieldMaterial(pattern)).ifPresent(
+                        material -> flagPart.render(poseStack, material.buffer(bufferSource, RenderType::entityNoOutline), packedLight, packedOverlay, afloat[0], afloat[1], afloat[2], 1.0F));
         }
     }
 
-    public static ResourceLocation getBannerTierTexture(BannerTier tier) {
-        return switch (tier) {
-            case IRON -> IRON_BANNER_BASE;
-            case GOLD -> null;
-            case EMERALD -> null;
-            case DIAMOND -> null;
-            case NETHERITE -> null;
-        };
-    }
+//    public static ResourceLocation getBannerTierTexture(BannerTier tier) {
+//        return switch (tier) {
+//            case IRON -> null;
+//            case GOLD -> null;
+//            case EMERALD -> null;
+//            case DIAMOND -> null;
+//            case NETHERITE -> null;
+//        };
+//    }
 }
