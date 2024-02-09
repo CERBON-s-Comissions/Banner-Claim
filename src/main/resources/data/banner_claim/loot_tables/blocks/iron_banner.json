@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "banner_claim:iron_banner_claim",
+          "name": "banner_claim:iron_banner",
           "functions": [
             {
               "function": "minecraft:copy_name",

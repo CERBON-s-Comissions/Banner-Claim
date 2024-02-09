@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "banner_claim:iron_banner_claim",
-    "banner_claim:wall_iron_banner_claim"
+    "banner_claim:iron_banner",
+    "banner_claim:wall_iron_banner"
   ]
 }
