@@ -6,7 +6,6 @@ import com.cerbon.banner_claim.block.custom.ChunkCacheBlockEntity;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.particle.BCParticles;
-import com.cerbon.banner_claim.patterns.BCPatterns;
 import com.cerbon.cerbons_api.api.general.particle.ClientParticleBuilder;
 import com.cerbon.cerbons_api.api.static_utilities.RandomUtils;
 import com.cerbon.cerbons_api.api.static_utilities.Vec3Colors;
@@ -61,9 +60,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         this.owner = owner;
     }
 
-    public void fromItem(ItemStack pStack, BannerTier tier) {
+    public void fromItem(ItemStack stack, BannerTier tier) {
         this.bannerTier = tier;
-        this.fromItem(pStack);
+        this.fromItem(stack);
     }
 
     public void fromItem(ItemStack item) {
@@ -148,7 +147,6 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     public static List<Pair<Holder<BannerPattern>, DyeColor>> createPatterns(@Nullable ListTag listTag) {
         List<Pair<Holder<BannerPattern>, DyeColor>> list = Lists.newArrayList();
-        list.add(Pair.of(BCPatterns.IRON_BANNER_BASE.getHolder().orElseThrow(), DyeColor.WHITE));
 
         if (listTag != null) {
             for(int i = 0; i < listTag.size(); ++i) {
@@ -191,7 +189,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         if (this.itemPatterns != null && !this.itemPatterns.isEmpty()) {
             CompoundTag compoundtag = new CompoundTag();
             compoundtag.put(TAG_PATTERNS, this.itemPatterns.copy());
-            BlockItem.setBlockEntityData(itemstack, this.getType(), compoundtag);
+            BlockItem.setBlockEntityData(itemstack, BCBlockEntities.BANNER_CLAIM.get(), compoundtag);
         }
 
         if (this.name != null)

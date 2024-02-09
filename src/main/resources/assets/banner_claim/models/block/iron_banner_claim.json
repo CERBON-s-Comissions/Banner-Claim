@@ -1,7 +1,5 @@
 {
-  "variants": {
-    "": {
-      "model": "minecraft:block/banner"
-    }
+  "textures": {
+    "particle": "minecraft:block/oak_planks"
   }
 }

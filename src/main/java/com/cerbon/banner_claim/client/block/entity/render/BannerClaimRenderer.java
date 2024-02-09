@@ -1,10 +1,10 @@
 package com.cerbon.banner_claim.client.block.entity.render;
 
+import com.cerbon.banner_claim.BannerClaim;
 import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.WallBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
-import com.cerbon.banner_claim.patterns.BCPatterns;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
@@ -20,6 +20,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -37,6 +38,8 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
     private final ModelPart pole;
     private final ModelPart bar;
 
+    public static final Material IRON_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/iron_banner_base"));
+
     public BannerClaimRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart modelpart = context.bakeLayer(ModelLayers.BANNER);
         this.flag = modelpart.getChild(FLAG);
@@ -48,6 +51,7 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
     public void render(@NotNull BannerClaimBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         List<Pair<Holder<BannerPattern>, DyeColor>> list = blockEntity.getPatterns();
         BannerTier tier = blockEntity.getBannerTier();
+
         float f = 0.6666667F;
         boolean flag = blockEntity.getLevel() == null;
         poseStack.pushPose();
@@ -75,14 +79,14 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
 
         poseStack.pushPose();
         poseStack.scale(f, -f, -f);
-        VertexConsumer vertexconsumer = ModelBakery.BANNER_BASE.buffer(buffer, RenderType::entitySolid);
+        VertexConsumer vertexconsumer = getBannerTierTexture(tier).buffer(buffer, RenderType::entitySolid);
         this.pole.render(poseStack, vertexconsumer, packedLight, packedOverlay);
         this.bar.render(poseStack, vertexconsumer, packedLight, packedOverlay);
         BlockPos blockpos = blockEntity.getBlockPos();
         float f2 = ((float)Math.floorMod(blockpos.getX() * 7L + blockpos.getY() * 9L + blockpos.getZ() * 13L + i, 100L) + partialTick) / 100.0F;
         this.flag.xRot = (-0.0125F + 0.01F * Mth.cos(((float)Math.PI * 2F) * f2)) * (float)Math.PI;
         this.flag.y = -32.0F;
-        renderPatterns(poseStack, buffer, packedLight, packedOverlay, this.flag, ModelBakery.BANNER_BASE, true, list);
+        renderPatterns(poseStack, buffer, packedLight, packedOverlay, this.flag, getBannerTierTexture(tier), true, list);
         poseStack.popPose();
         poseStack.popPose();
     }
@@ -98,21 +102,19 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
             Pair<Holder<BannerPattern>, DyeColor> pair = patterns.get(i);
             float[] afloat = pair.getSecond().getTextureDiffuseColors();
 
-            if (pair.getFirst().is(BCPatterns.IRON_BANNER_BASE.getHolder().orElseThrow().unwrapKey().orElseThrow()))
-                pair.getFirst().unwrapKey().map(Sheets::getBannerMaterial).ifPresent(material -> flagPart.render(poseStack, material.buffer(bufferSource, RenderType::entityNoOutline), packedLight, packedOverlay));
-            else
-                pair.getFirst().unwrapKey().map(pattern -> banner ? Sheets.getBannerMaterial(pattern) : Sheets.getShieldMaterial(pattern)).ifPresent(
-                        material -> flagPart.render(poseStack, material.buffer(bufferSource, RenderType::entityNoOutline), packedLight, packedOverlay, afloat[0], afloat[1], afloat[2], 1.0F));
+            pair.getFirst().unwrapKey().map(pattern -> banner ? Sheets.getBannerMaterial(pattern) : Sheets.getShieldMaterial(pattern)).ifPresent(
+                    material -> flagPart.render(poseStack, material.buffer(bufferSource, RenderType::entityNoOutline), packedLight, packedOverlay, afloat[0], afloat[1], afloat[2], 1.0F));
         }
     }
 
-//    public static ResourceLocation getBannerTierTexture(BannerTier tier) {
-//        return switch (tier) {
-//            case IRON -> null;
-//            case GOLD -> null;
-//            case EMERALD -> null;
-//            case DIAMOND -> null;
-//            case NETHERITE -> null;
-//        };
-//    }
+    public static Material getBannerTierTexture(BannerTier tier) {
+        return switch (tier) {
+            case IRON -> IRON_BASE;
+            case GOLD -> null;
+            case EMERALD -> null;
+            case DIAMOND -> null;
+            case NETHERITE -> null;
+            default -> ModelBakery.BANNER_BASE;
+        };
+    }
 }

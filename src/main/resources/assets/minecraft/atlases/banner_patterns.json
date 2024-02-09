@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "banner_claim:entity/iron_banner_base"
+    }
+  ]
+}
