@@ -60,9 +60,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         this.owner = owner;
     }
 
-    public void fromItem(ItemStack stack, BannerTier tier) {
+    public void fromItem(ItemStack pStack, BannerTier tier) {
         this.bannerTier = tier;
-        this.fromItem(stack);
+        this.fromItem(pStack);
     }
 
     public void fromItem(ItemStack item) {
