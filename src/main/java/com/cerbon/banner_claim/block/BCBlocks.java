@@ -17,7 +17,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class BCBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, BannerClaim.MOD_ID);
 
-    public static final RegistryObject<Block> IRON_BANNER = BLOCKS.register("iron_banner", () -> new BannerClaimBlock(BannerTier.IRON, BlockBehaviour.Properties.of().mapColor(MapColor.RAW_IRON).forceSolidOn().instrument(NoteBlockInstrument.BASS).noCollission().strength(5.0F, 6.0F).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> IRON_BANNER = BLOCKS.register("iron_banner", () -> new BannerClaimBlock(BannerTier.IRON, BlockBehaviour.Properties.of().mapColor(MapColor.RAW_IRON).instrument(NoteBlockInstrument.BASS).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).noCollission().forceSolidOn()));
     public static final RegistryObject<Block> WALL_IRON_BANNER = BLOCKS.register("wall_iron_banner", () -> new WallBannerClaimBlock(BannerTier.IRON, BlockBehaviour.Properties.copy(BCBlocks.IRON_BANNER.get()).dropsLike(BCBlocks.IRON_BANNER.get())));
 
     public static final RegistryObject<Block> GOLD_BANNER = BLOCKS.register("gold_banner", () -> new BannerClaimBlock(BannerTier.GOLD, BlockBehaviour.Properties.of().mapColor(MapColor.GOLD).instrument(NoteBlockInstrument.BELL).requiresCorrectToolForDrops().strength(3.0F, 6.0F).sound(SoundType.METAL).noCollission().forceSolidOn()));
