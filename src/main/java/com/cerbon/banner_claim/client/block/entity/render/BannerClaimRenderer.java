@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +41,7 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
     public static final Material GOLD_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/gold_banner_base"));
     public static final Material EMERALD_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/emerald_banner_base"));
     public static final Material DIAMOND_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/diamond_banner_base"));
+    public static final Material NETHERITE_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/netherite_banner_base"));
 
     public BannerClaimRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart modelpart = context.bakeLayer(ModelLayers.BANNER);
@@ -116,8 +116,7 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
             case GOLD -> GOLD_BASE;
             case EMERALD -> EMERALD_BASE;
             case DIAMOND -> DIAMOND_BASE;
-            case NETHERITE -> null;
-            default -> ModelBakery.BANNER_BASE;
+            case NETHERITE -> NETHERITE_BASE;
         };
     }
 }

@@ -8,6 +8,8 @@
     "banner_claim:emerald_banner",
     "banner_claim:wall_emerald_banner",
     "banner_claim:diamond_banner",
-    "banner_claim:wall_diamond_banner"
+    "banner_claim:wall_diamond_banner",
+    "banner_claim:netherite_banner",
+    "banner_claim:wall_netherite_banner"
   ]
 }
