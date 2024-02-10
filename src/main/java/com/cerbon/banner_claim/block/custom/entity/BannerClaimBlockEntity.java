@@ -19,7 +19,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Nameable;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -32,7 +31,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,8 +47,6 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
-
-    public List<Entity> entitiesInBox = new ArrayList<>();
 
     public BannerClaimBlockEntity(BlockPos pos, BlockState blockState) {
         super(blockState.getBlock(), BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
@@ -224,9 +220,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
         ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
 
-        AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
+        AABB box = getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
         List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
-        //bannerClaim.entitiesInBox.addAll(level.getEntitiesOfClass(Entity.class, box, entity -> !(entity instanceof Player) && !bannerClaim.entitiesInBox.contains(entity)));
 
         if (level.isClientSide) {
             if (level.random.nextFloat() <= 0.1f) {
