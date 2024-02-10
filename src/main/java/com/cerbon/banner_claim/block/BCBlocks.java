@@ -26,6 +26,9 @@ public class BCBlocks {
     public static final RegistryObject<Block> EMERALD_BANNER = BLOCKS.register("emerald_banner", () -> new BannerClaimBlock(BannerTier.EMERALD, BlockBehaviour.Properties.of().mapColor(MapColor.EMERALD).instrument(NoteBlockInstrument.BIT).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).noCollission().forceSolidOn()));
     public static final RegistryObject<Block> WALL_EMERALD_BANNER = BLOCKS.register("wall_emerald_banner", () -> new WallBannerClaimBlock(BannerTier.EMERALD, BlockBehaviour.Properties.copy(BCBlocks.EMERALD_BANNER.get()).dropsLike(BCBlocks.EMERALD_BANNER.get())));
 
+    public static final RegistryObject<Block> DIAMOND_BANNER = BLOCKS.register("diamond_banner", () -> new BannerClaimBlock(BannerTier.DIAMOND, BlockBehaviour.Properties.of().mapColor(MapColor.DIAMOND).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).noCollission().forceSolidOn()));
+    public static final RegistryObject<Block> WALL_DIAMOND_BANNER = BLOCKS.register("wall_diamond_banner", () -> new WallBannerClaimBlock(BannerTier.DIAMOND, BlockBehaviour.Properties.copy(BCBlocks.DIAMOND_BANNER.get()).dropsLike(BCBlocks.DIAMOND_BANNER.get())));
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

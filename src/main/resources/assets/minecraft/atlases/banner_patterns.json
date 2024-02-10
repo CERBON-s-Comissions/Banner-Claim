@@ -11,6 +11,10 @@
     {
       "type": "single",
       "resource": "banner_claim:entity/emerald_banner_base"
+    },
+    {
+      "type": "single",
+      "resource": "banner_claim:entity/diamond_banner_base"
     }
   ]
 }
