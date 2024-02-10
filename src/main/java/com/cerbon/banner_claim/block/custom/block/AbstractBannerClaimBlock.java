@@ -40,7 +40,7 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
                 blockEntity.setCustomName(stack.getHoverName());
 
                 if (placer instanceof Player player)
-                    blockEntity.setOwnerUUID(player.getUUID());
+                    blockEntity.setOwner(player.getUUID());
             });
         }
         else

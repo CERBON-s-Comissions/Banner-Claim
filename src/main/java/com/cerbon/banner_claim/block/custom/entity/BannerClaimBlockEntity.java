@@ -206,8 +206,15 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         return itemstack;
     }
 
-    public void setOwnerUUID(UUID playerUUID) {
+    public void setOwner(UUID playerUUID) {
         ownerUUID = playerUUID;
+    }
+
+    public Player getOwner() {
+        if (level != null)
+            return level.getPlayerByUUID(ownerUUID);
+
+        return null;
     }
 
     public BannerTier getBannerTier() {
