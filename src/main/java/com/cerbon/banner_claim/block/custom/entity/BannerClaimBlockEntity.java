@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nameable {
@@ -206,18 +207,20 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         ChunkCacheBlockEntity.tick(level, pos, state, entity);
 
         if (level.isClientSide) {
-            AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
-            List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
+            if (new Random().nextFloat() <= 0.1f) {
+                AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
+                List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
 
-            for (Player player : playerInBox) {
-                for (double x : List.of(box.minX, box.maxX)) {
-                    double zRand = box.getCenter().z + box.getZsize() * RandomUtils.randDouble(0.5);
-                    Particles.particleFactory.build(randYPos(x, player, zRand), Vec3.ZERO);
-                }
+                for (Player player : playerInBox) {
+                    for (double x : List.of(box.minX, box.maxX)) {
+                        for (double z = box.minZ; z <= box.maxZ; z++)
+                            Particles.particleFactory.build(randYPos(x, player, z), Vec3.ZERO);
+                    }
 
-                for (double z : List.of(box.minZ, box.maxZ)) {
-                    double xRand = box.getCenter().x + box.getXsize() * RandomUtils.randDouble(0.5);
-                    Particles.particleFactory.build(randYPos(xRand, player, z), Vec3.ZERO);
+                    for (double z : List.of(box.minZ, box.maxZ)) {
+                        for (double x = box.minX; x <= box.maxX; x++)
+                            Particles.particleFactory.build(randYPos(x, player, z), Vec3.ZERO);
+                    }
                 }
             }
         }
