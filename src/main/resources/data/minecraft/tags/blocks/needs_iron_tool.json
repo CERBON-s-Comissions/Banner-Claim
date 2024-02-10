@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "banner_claim:gold_banner",
-    "banner_claim:wall_gold_banner"
+    "banner_claim:wall_gold_banner",
+    "banner_claim:emerald_banner",
+    "banner_claim:wall_emerald_banner"
   ]
 }
