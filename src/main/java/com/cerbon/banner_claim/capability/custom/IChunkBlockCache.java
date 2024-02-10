@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface IChunkBlockCache {
     void addToChunk(ChunkPos chunkPos, Block block, BlockPos pos);
-    List<BlockPos> getBlocksFromChunk(ChunkPos chunkPos, Block block);
+    List<BlockPos> getBlocksFromChunk(ChunkPos chunkPos, Block... blocks);
     void removeFromChunk(ChunkPos chunkPos, Block block, BlockPos pos);
 }

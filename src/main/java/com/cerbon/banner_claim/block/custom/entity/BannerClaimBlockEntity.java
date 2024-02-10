@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -48,6 +49,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
+
+    public static List<Entity> entitiesInBox;
 
     public BannerClaimBlockEntity(BlockPos pos, BlockState blockState) {
         super(blockState.getBlock(), BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
@@ -209,8 +212,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         if (level.isClientSide) {
             if (new Random().nextFloat() <= 0.1f) {
                 AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
-                List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
+                entitiesInBox = level.getEntitiesOfClass(Entity.class, box);
 
+                List<Player> playerInBox = entitiesInBox.stream().filter(entity1 -> entity1 instanceof Player).map(entity1 -> (Player) entity1).toList();
                 for (Player player : playerInBox) {
                     for (double x : List.of(box.minX, box.maxX)) {
                         for (double z = box.minZ; z <= box.maxZ; z++)
@@ -230,11 +234,11 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         return new Vec3(x, player.getY() + RandomUtils.randDouble(0.5) + 1, z);
     }
 
-    private static AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
+    public static AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
         return new AABB(pos.x, pos.y, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
     }
 
-    private static int getBannerTierRange(BannerTier tier) {
+    public static int getBannerTierRange(BannerTier tier) {
         return switch (tier) {
             case IRON -> 8;
             case GOLD -> 16;

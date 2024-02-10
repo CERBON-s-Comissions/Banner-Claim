@@ -22,11 +22,13 @@ public class ChunkBlockCache implements IChunkBlockCache {
     }
 
     @Override
-    public List<BlockPos> getBlocksFromChunk(ChunkPos chunkPos, Block block) {
+    public List<BlockPos> getBlocksFromChunk(ChunkPos chunkPos, Block... blocks) {
         List<BlockPos> positions = new ArrayList<>();
 
-        if (map.containsKey(chunkPos) && map.get(chunkPos).containsKey(block))
-             positions = map.get(chunkPos).get(block).stream().toList();
+        for (Block block : blocks) {
+            if (map.containsKey(chunkPos) && map.get(chunkPos).containsKey(block))
+                positions = map.get(chunkPos).get(block).stream().toList();
+        }
 
         return positions;
     }
