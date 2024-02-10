@@ -3,6 +3,10 @@
     {
       "type": "single",
       "resource": "banner_claim:entity/iron_banner_base"
+    },
+    {
+      "type": "single",
+      "resource": "banner_claim:entity/gold_banner_base"
     }
   ]
 }

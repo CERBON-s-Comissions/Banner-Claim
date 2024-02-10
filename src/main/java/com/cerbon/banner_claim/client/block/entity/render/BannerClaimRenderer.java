@@ -39,6 +39,7 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
     private final ModelPart bar;
 
     public static final Material IRON_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/iron_banner_base"));
+    public static final Material GOLD_BASE = new Material(Sheets.BANNER_SHEET, new ResourceLocation(BannerClaim.MOD_ID, "entity/gold_banner_base"));
 
     public BannerClaimRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart modelpart = context.bakeLayer(ModelLayers.BANNER);
@@ -110,7 +111,7 @@ public class BannerClaimRenderer implements BlockEntityRenderer<BannerClaimBlock
     public static Material getBannerTierTexture(BannerTier tier) {
         return switch (tier) {
             case IRON -> IRON_BASE;
-            case GOLD -> null;
+            case GOLD -> GOLD_BASE;
             case EMERALD -> null;
             case DIAMOND -> null;
             case NETHERITE -> null;

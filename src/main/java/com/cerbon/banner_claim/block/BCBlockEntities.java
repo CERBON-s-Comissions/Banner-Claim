@@ -16,7 +16,7 @@ public class BCBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCKS_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, BannerClaim.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<BannerClaimBlockEntity>> BANNER_CLAIM = BLOCKS_ENTITIES.register("banner_claim", () ->
-            BlockEntityType.Builder.of(BannerClaimBlockEntity::new, BCBlocks.IRON_BANNER.get(), BCBlocks.WALL_IRON_BANNER.get()).build(null));
+            BlockEntityType.Builder.of(BannerClaimBlockEntity::new, BCBlocks.IRON_BANNER.get(), BCBlocks.WALL_IRON_BANNER.get(), BCBlocks.GOLD_BANNER.get(), BCBlocks.WALL_GOLD_BANNER.get()).build(null));
 
     @OnlyIn(Dist.CLIENT)
     public static void initClient() {
