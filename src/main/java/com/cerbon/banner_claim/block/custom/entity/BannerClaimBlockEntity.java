@@ -267,6 +267,6 @@ public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
                 .color(Vec3Colors.GOLD)
                 .brightness(15728880)
                 .colorVariation(0.2)
-                .scale(0.075f);
+                .scale(0.1f);
     }
 }
