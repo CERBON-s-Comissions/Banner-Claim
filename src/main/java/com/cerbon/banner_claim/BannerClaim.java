@@ -3,6 +3,7 @@ package com.cerbon.banner_claim;
 import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.BCBlocks;
 import com.cerbon.banner_claim.item.BCItems;
+import com.cerbon.banner_claim.item.BCTabs;
 import com.cerbon.banner_claim.particle.BCParticles;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,6 +22,7 @@ public class BannerClaim {
         BCBlocks.register(modEventBus);
         BCBlockEntities.register(modEventBus);
 
+        BCTabs.register(modEventBus);
         BCItems.register(modEventBus);
 
         BCParticles.register(modEventBus);

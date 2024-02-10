@@ -1,0 +1,9 @@
+{
+  "block.banner_claim.iron_banner": "Iron Banner",
+  "block.banner_claim.gold_banner": "Gold Banner",
+  "block.banner_claim.emerald_banner": "Emerald Banner",
+  "block.banner_claim.diamond_banner": "Diamond Banner",
+  "block.banner_claim.netherite_banner": "Netherite Banner",
+
+  "creativemodetab.banner_claim.banner_claim_tab": "Banner Claim"
+}
