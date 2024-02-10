@@ -18,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Entity;
@@ -109,6 +110,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
         if (this.name != null)
             tag.putString("CustomName", Component.Serializer.toJson(this.name));
+
+        if (this.owner != null)
+            tag.putUUID("Owner", owner.getUUID());
     }
 
     @Override
@@ -120,6 +124,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
         this.itemPatterns = tag.getList(TAG_PATTERNS, 10);
         this.patterns = null;
+
+        if (level instanceof ServerLevel serverLevel && tag.contains("Owner"))
+            owner = (ServerPlayer) serverLevel.getPlayerByUUID(tag.getUUID("Owner"));
     }
 
     @Override
