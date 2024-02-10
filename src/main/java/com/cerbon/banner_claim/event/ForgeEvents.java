@@ -21,7 +21,7 @@ public class ForgeEvents {
         IEntityMixin playerMixin = ((IEntityMixin) player);
         BannerClaimBlockEntity bannerClaimBlockEntity = playerMixin.getBannerClaimBlockEntity();
 
-        if (bannerClaimBlockEntity == null) return;
+        if (bannerClaimBlockEntity == null || player.isCreative() || player.isSpectator()) return;
 
         boolean isInBannerRange = bannerClaimBlockEntity.playersInBox.contains(player);
         boolean isOwner = player == bannerClaimBlockEntity.getOwner();
