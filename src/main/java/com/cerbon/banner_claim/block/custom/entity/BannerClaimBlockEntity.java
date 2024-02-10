@@ -18,8 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -34,8 +32,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 
 public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nameable {
@@ -46,23 +45,21 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     @Nullable
     private Component name;
     private BannerTier bannerTier;
-    private ServerPlayer owner;
+    private UUID ownerUUID;
 
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
 
-    public static List<Entity> entitiesInBox;
+    public List<Entity> entitiesInBox = new ArrayList<>();
 
     public BannerClaimBlockEntity(BlockPos pos, BlockState blockState) {
         super(blockState.getBlock(), BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
         this.bannerTier = ((AbstractBannerClaimBlock) blockState.getBlock()).getTier();
-        this.owner = ((AbstractBannerClaimBlock) blockState.getBlock()).getOwner();
     }
 
-    public BannerClaimBlockEntity(BlockPos pos, BlockState blockState, BannerTier bannerTier, ServerPlayer owner) {
+    public BannerClaimBlockEntity(BlockPos pos, BlockState blockState, BannerTier bannerTier) {
         this(pos, blockState);
         this.bannerTier = bannerTier;
-        this.owner = owner;
     }
 
     public void fromItem(ItemStack pStack, BannerTier tier) {
@@ -111,8 +108,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         if (this.name != null)
             tag.putString("CustomName", Component.Serializer.toJson(this.name));
 
-        if (this.owner != null)
-            tag.putUUID("Owner", owner.getUUID());
+        if (this.ownerUUID != null)
+            tag.putUUID("Owner", ownerUUID);
     }
 
     @Override
@@ -125,8 +122,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         this.itemPatterns = tag.getList(TAG_PATTERNS, 10);
         this.patterns = null;
 
-        if (level instanceof ServerLevel serverLevel && tag.contains("Owner"))
-            owner = (ServerPlayer) serverLevel.getPlayerByUUID(tag.getUUID("Owner"));
+        if (tag.contains("Owner"))
+            ownerUUID = tag.getUUID("Owner");
     }
 
     @Override
@@ -209,19 +206,23 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         return itemstack;
     }
 
+    public void setOwnerUUID(UUID playerUUID) {
+        ownerUUID = playerUUID;
+    }
+
     public BannerTier getBannerTier() {
         return this.bannerTier;
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity entity) {
-        ChunkCacheBlockEntity.tick(level, pos, state, entity);
+    public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
+        ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
+
+        AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
+        List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
+        //bannerClaim.entitiesInBox.addAll(level.getEntitiesOfClass(Entity.class, box, entity -> !(entity instanceof Player) && !bannerClaim.entitiesInBox.contains(entity)));
 
         if (level.isClientSide) {
-            if (new Random().nextFloat() <= 0.1f) {
-                AABB box = getAffectingBox(level, VecUtils.asVec3(pos), ((AbstractBannerClaimBlock) state.getBlock()).getTier());
-                entitiesInBox = level.getEntitiesOfClass(Entity.class, box);
-
-                List<Player> playerInBox = entitiesInBox.stream().filter(entity1 -> entity1 instanceof Player).map(entity1 -> (Player) entity1).toList();
+            if (level.random.nextFloat() <= 0.1f) {
                 for (Player player : playerInBox) {
                     for (double x : List.of(box.minX, box.maxX)) {
                         for (double z = box.minZ; z <= box.maxZ; z++)

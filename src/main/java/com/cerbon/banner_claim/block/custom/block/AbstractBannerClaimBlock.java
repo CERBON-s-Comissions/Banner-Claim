@@ -4,7 +4,6 @@ import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     private final BannerTier tier;
-    private ServerPlayer owner;
 
     protected AbstractBannerClaimBlock(BannerTier tier, Properties properties) {
         super(DyeColor.WHITE, properties);
@@ -32,16 +30,18 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new BannerClaimBlockEntity(pos, state, tier, owner);
+        return new BannerClaimBlockEntity(pos, state, tier);
     }
 
     @Override
     public void setPlacedBy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         if (!level.isClientSide) {
-            level.getBlockEntity(pos, BCBlockEntities.BANNER_CLAIM.get()).ifPresent(blockEntity -> blockEntity.setCustomName(stack.getHoverName()));
+            level.getBlockEntity(pos, BCBlockEntities.BANNER_CLAIM.get()).ifPresent(blockEntity -> {
+                blockEntity.setCustomName(stack.getHoverName());
 
-            if (placer instanceof ServerPlayer player)
-                owner = player;
+                if (placer instanceof Player player)
+                    blockEntity.setOwnerUUID(player.getUUID());
+            });
         }
         else
             level.getBlockEntity(pos, BCBlockEntities.BANNER_CLAIM.get()).ifPresent(blockEntity -> blockEntity.fromItem(stack));
@@ -57,10 +57,6 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         return createTickerHelper(blockEntityType, BCBlockEntities.BANNER_CLAIM.get(), BannerClaimBlockEntity::tick);
-    }
-
-    public ServerPlayer getOwner() {
-        return owner;
     }
 
     public BannerTier getTier() {
