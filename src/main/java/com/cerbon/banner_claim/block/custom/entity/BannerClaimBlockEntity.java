@@ -2,7 +2,6 @@ package com.cerbon.banner_claim.block.custom.entity;
 
 import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.custom.BannerTier;
-import com.cerbon.banner_claim.block.custom.ChunkCacheBlockEntity;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.particle.BCParticles;
@@ -26,6 +25,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nameable {
+public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
     public static final String TAG_PATTERNS = "Patterns";
     public static final String TAG_PATTERN = "Pattern";
     public static final String TAG_COLOR = "Color";
@@ -52,7 +52,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
 
     public BannerClaimBlockEntity(BlockPos pos, BlockState blockState) {
-        super(blockState.getBlock(), BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
+        super(BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
         this.bannerTier = ((AbstractBannerClaimBlock) blockState.getBlock()).getTier();
     }
 
@@ -221,8 +221,6 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
-        ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
-
         AABB box = bannerClaim.getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
         bannerClaim.playersInBox = level.getEntitiesOfClass(Player.class, box);
 
