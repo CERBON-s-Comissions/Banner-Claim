@@ -229,12 +229,12 @@ public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
                 for (Player player : bannerClaim.playersInBox) {
                     for (double x : List.of(box.minX, box.maxX)) {
                         for (double z = box.minZ; z <= box.maxZ; z++)
-                            Particles.particleFactory.build(randYPos(x, player, z), Vec3.ZERO);
+                            Particles.particleFactory.build(randYPos(x, player, z + RandomUtils.randDouble(0.5)), Vec3.ZERO);
                     }
 
                     for (double z : List.of(box.minZ, box.maxZ)) {
                         for (double x = box.minX; x <= box.maxX; x++)
-                            Particles.particleFactory.build(randYPos(x, player, z), Vec3.ZERO);
+                            Particles.particleFactory.build(randYPos(x + RandomUtils.randDouble(0.5), player, z), Vec3.ZERO);
                     }
                 }
             }
