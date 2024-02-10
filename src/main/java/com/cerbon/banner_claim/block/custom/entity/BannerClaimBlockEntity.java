@@ -6,6 +6,7 @@ import com.cerbon.banner_claim.block.custom.ChunkCacheBlockEntity;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.particle.BCParticles;
+import com.cerbon.banner_claim.util.mixin.IEntityMixin;
 import com.cerbon.cerbons_api.api.general.particle.ClientParticleBuilder;
 import com.cerbon.cerbons_api.api.static_utilities.RandomUtils;
 import com.cerbon.cerbons_api.api.static_utilities.Vec3Colors;
@@ -44,6 +45,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     private Component name;
     private BannerTier bannerTier;
     private UUID ownerUUID;
+
+    public List<Player> playersInBox;
 
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
@@ -220,12 +223,12 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
         ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
 
-        AABB box = getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
-        List<Player> playerInBox = level.getEntitiesOfClass(Player.class, box);
+        AABB box = bannerClaim.getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
+        bannerClaim.playersInBox = level.getEntitiesOfClass(Player.class, box);
 
         if (level.isClientSide) {
             if (level.random.nextFloat() <= 0.1f) {
-                for (Player player : playerInBox) {
+                for (Player player : bannerClaim.playersInBox) {
                     for (double x : List.of(box.minX, box.maxX)) {
                         for (double z = box.minZ; z <= box.maxZ; z++)
                             Particles.particleFactory.build(randYPos(x, player, z), Vec3.ZERO);
@@ -237,6 +240,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
                     }
                 }
             }
+        } else {
+            for (Player player : bannerClaim.playersInBox)
+                ((IEntityMixin) player).setBannerClaimBlockEntity(bannerClaim);
         }
     }
 
@@ -244,7 +250,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         return new Vec3(x, player.getY() + RandomUtils.randDouble(0.5) + 1, z);
     }
 
-    public static AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
+    public AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
         return new AABB(pos.x, pos.y, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
     }
 
