@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "banner_claim.refmap.json",
   "mixins": [
-    "entity.EntityMixin"
+    "entity.EntityMixin",
+    "recipe.BannerDuplicateRecipeMixin"
   ],
   "client": [
     "screen.LoomScreenMixin"
