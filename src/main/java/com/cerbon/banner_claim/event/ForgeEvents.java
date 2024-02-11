@@ -71,7 +71,7 @@ public class ForgeEvents {
                             BannerTier tier = bannerClaimBlockEntity.getBannerTier();
                             int bannerTierRange  = BannerClaimBlockEntity.getBannerTierRange(tier);
 
-                            event.getAffectedBlocks().removeIf(pos -> Math.abs(blockPos.getX() - pos.getX()) <= bannerTierRange && Math.abs(blockPos.getY() - pos.getY()) <= event.getLevel().getHeight() && Math.abs(blockPos.getZ() - pos.getZ()) <= bannerTierRange);
+                            event.getAffectedBlocks().removeIf(pos -> Math.abs(blockPos.getX() - pos.getX()) <= bannerTierRange && Math.abs(blockPos.getY() - 10) <= pos.getY() && Math.abs(blockPos.getZ() - pos.getZ()) <= bannerTierRange);
                         }
                     }
                 }
