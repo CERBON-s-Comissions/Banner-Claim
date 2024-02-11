@@ -37,7 +37,8 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     public void setPlacedBy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         if (!level.isClientSide) {
             level.getBlockEntity(pos, BCBlockEntities.BANNER_CLAIM.get()).ifPresent(blockEntity -> {
-                blockEntity.setCustomName(stack.getHoverName());
+                if (stack.hasCustomHoverName())
+                    blockEntity.setCustomName(stack.getHoverName());
 
                 if (placer instanceof Player player)
                     blockEntity.setOwner(player.getUUID());
