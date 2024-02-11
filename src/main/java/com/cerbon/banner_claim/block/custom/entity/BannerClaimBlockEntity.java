@@ -5,7 +5,6 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.particle.BCParticles;
-import com.cerbon.banner_claim.util.mixin.IEntityMixin;
 import com.cerbon.cerbons_api.api.general.particle.ClientParticleBuilder;
 import com.cerbon.cerbons_api.api.static_utilities.RandomUtils;
 import com.cerbon.cerbons_api.api.static_utilities.Vec3Colors;
@@ -25,7 +24,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -36,7 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
+public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nameable {
     public static final String TAG_PATTERNS = "Patterns";
     public static final String TAG_PATTERN = "Pattern";
     public static final String TAG_COLOR = "Color";
@@ -46,13 +44,11 @@ public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
     private BannerTier bannerTier;
     private UUID ownerUUID;
 
-    public List<Player> playersInBox;
-
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
 
     public BannerClaimBlockEntity(BlockPos pos, BlockState blockState) {
-        super(BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
+        super(blockState.getBlock(), BCBlockEntities.BANNER_CLAIM.get(), pos, blockState);
         this.bannerTier = ((AbstractBannerClaimBlock) blockState.getBlock()).getTier();
     }
 
@@ -221,12 +217,14 @@ public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
+        ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
+
         AABB box = bannerClaim.getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
-        bannerClaim.playersInBox = level.getEntitiesOfClass(Player.class, box);
+        List<Player> playersInBox = level.getEntitiesOfClass(Player.class, box);
 
         if (level.isClientSide) {
             if (level.random.nextFloat() <= 0.1f) {
-                for (Player player : bannerClaim.playersInBox) {
+                for (Player player : playersInBox) {
                     for (double x : List.of(box.minX, box.maxX)) {
                         for (double z = box.minZ; z <= box.maxZ; z++)
                             Particles.particleFactory.build(randYPos(x, player, z + RandomUtils.randDouble(0.5)), Vec3.ZERO);
@@ -238,9 +236,6 @@ public class BannerClaimBlockEntity extends BlockEntity implements Nameable {
                     }
                 }
             }
-        } else {
-            for (Player player : bannerClaim.playersInBox)
-                ((IEntityMixin) player).setBannerClaimBlockEntity(bannerClaim);
         }
     }
 
