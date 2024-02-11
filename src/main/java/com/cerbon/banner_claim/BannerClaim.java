@@ -4,6 +4,7 @@ import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.BCBlocks;
 import com.cerbon.banner_claim.item.BCItems;
 import com.cerbon.banner_claim.item.BCTabs;
+import com.cerbon.banner_claim.misc.BCRecipes;
 import com.cerbon.banner_claim.particle.BCParticles;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -26,5 +27,6 @@ public class BannerClaim {
         BCItems.register(modEventBus);
 
         BCParticles.register(modEventBus);
+        BCRecipes.register(modEventBus);
     }
 }
