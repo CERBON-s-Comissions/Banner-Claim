@@ -219,7 +219,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
         ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
 
-        AABB box = bannerClaim.getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
+        AABB box = getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
         List<Player> playersInBox = level.getEntitiesOfClass(Player.class, box);
 
         if (level.isClientSide) {
@@ -243,7 +243,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         return new Vec3(x, player.getY() + RandomUtils.randDouble(0.5) + 1, z);
     }
 
-    public AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
+    public static AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
         return new AABB(pos.x, pos.y - 10, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
     }
 
