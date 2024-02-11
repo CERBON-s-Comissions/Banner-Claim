@@ -244,7 +244,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     }
 
     public AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
-        return new AABB(pos.x, pos.y, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
+        return new AABB(pos.x, pos.y - 10, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
     }
 
     public static int getBannerTierRange(BannerTier tier) {
