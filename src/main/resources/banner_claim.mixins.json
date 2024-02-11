@@ -8,6 +8,7 @@
     "entity.EntityMixin"
   ],
   "client": [
+    "screen.LoomScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
