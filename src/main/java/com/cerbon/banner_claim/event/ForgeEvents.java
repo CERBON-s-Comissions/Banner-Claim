@@ -26,7 +26,7 @@ public class ForgeEvents {
         boolean isInBannerRange = bannerClaimBlockEntity.playersInBox.contains(player);
         boolean isOwner = player == bannerClaimBlockEntity.getOwner();
 
-        if (isInBannerRange && !isOwner && player.getAbilities().mayBuild) {
+        if (isInBannerRange && !isOwner) {
             player.getAbilities().mayBuild = false;
             player.connection.send(new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
 
