@@ -13,6 +13,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -26,6 +27,24 @@ public class ForgeEvents {
     public static void onAttachCapabilitiesLevel(AttachCapabilitiesEvent<Level> event) {
         if (event.getObject() == null || event.getObject().getCapability(ChunkBlockCacheProvider.CHUNK_BLOCK_CACHE).isPresent()) return;
         event.addCapability(new ResourceLocation(BannerClaim.MOD_ID, "chunk_block_cache_capability"), new ChunkBlockCacheProvider());
+    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getLevel().isClientSide) return;
+
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            BCUtils.ifBannerClaimContainsChunkDo(new ChunkPos(event.getPos()), (ServerLevel) serverPlayer.level(), (bannerClaimPos, bannerClaimBlockEntity) -> {
+                BannerTier tier = bannerClaimBlockEntity.getBannerTier();
+                int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
+
+                boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
+                boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
+
+                if (isWithinBannerRange && !isOwner)
+                    event.setUseBlock(Event.Result.DENY);
+            });
+        }
     }
 
     @SubscribeEvent
