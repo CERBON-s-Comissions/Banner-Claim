@@ -25,7 +25,7 @@ public class ChunkBlockCache {
 
         for (Block block : blocks)
             if (map.get(chunkPos).containsKey(block))
-                positions = map.get(chunkPos).get(block).stream().toList();
+                positions.addAll(map.get(chunkPos).get(block).stream().toList());
 
         return positions;
     }
