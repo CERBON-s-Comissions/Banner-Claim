@@ -13,7 +13,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
@@ -77,10 +79,32 @@ public class ForgeEvents {
                 }
         });
     }
-//
-//    @SubscribeEvent
-//    public static void onMobGriefing(EntityMobGriefingEvent event) {
-//        if (!((IEntityMixin)event.getEntity()).canDoGriefing())
-//            event.setResult(Event.Result.DENY);
-//    }
+
+    @SubscribeEvent
+    public static void onMobGriefing(EntityMobGriefingEvent event) {
+        if (event.getEntity().level().isClientSide) return;
+
+        BCCapabilities.getChunkBlockCache(event.getEntity().level()).ifPresent(capability -> {
+            ChunkPos chunkPos = new ChunkPos(event.getEntity().blockPosition());
+
+            for (int x = chunkPos.x - 8; x <= chunkPos.x + 8; x++)
+                for (int z = chunkPos.z - 8; z <= chunkPos.z + 8; z++) {
+                    List<BlockPos> blocks = capability.getBlocksFromChunk(new ChunkPos(x, z), BCBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).toArray(Block[]::new));
+
+                    for (BlockPos blockPos : blocks) {
+                        BlockEntity blockEntity = event.getEntity().level().getBlockEntity(blockPos);
+
+                        if (blockEntity instanceof BannerClaimBlockEntity bannerClaimBlockEntity) {
+                            BannerTier tier = bannerClaimBlockEntity.getBannerTier();
+                            int bannerTierRange  = BannerClaimBlockEntity.getBannerTierRange(tier);
+
+                            if (Math.abs(blockPos.getX() - event.getEntity().getX()) <= bannerTierRange && Math.abs(blockPos.getY() - 10) <= event.getEntity().getY() && Math.abs(blockPos.getZ() - event.getEntity().getZ()) <= bannerTierRange) {
+                                event.setResult(Event.Result.DENY);
+                                break;
+                            }
+                        }
+                    }
+                }
+        });
+    }
 }
