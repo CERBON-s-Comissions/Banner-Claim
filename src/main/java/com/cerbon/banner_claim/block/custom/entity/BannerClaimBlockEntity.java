@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-
 public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nameable {
     public static final String TAG_PATTERNS = "Patterns";
     public static final String TAG_PATTERN = "Pattern";
