@@ -33,7 +33,7 @@ public class ForgeEvents {
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getLevel().isClientSide) return;
 
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer && !serverPlayer.isCreative() && !serverPlayer.isSpectator()) {
             BCUtils.ifBannerClaimContainsChunkDo(new ChunkPos(event.getPos()), (ServerLevel) serverPlayer.level(), (bannerClaimPos, bannerClaimBlockEntity) -> {
                 BannerTier tier = bannerClaimBlockEntity.getBannerTier();
                 int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
@@ -51,7 +51,7 @@ public class ForgeEvents {
     public static void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
         if (event.getLevel().isClientSide() || event.getEntity() == null) return;
 
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer && !serverPlayer.isCreative() && !serverPlayer.isSpectator()) {
             BCUtils.ifBannerClaimContainsChunkDo(new ChunkPos(event.getPos()), (ServerLevel) serverPlayer.level(), (bannerClaimPos, bannerClaimBlockEntity) -> {
                 BannerTier tier = bannerClaimBlockEntity.getBannerTier();
                 int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
