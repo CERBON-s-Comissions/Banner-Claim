@@ -44,7 +44,7 @@ public class ForgeEvents {
                 boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
-                if (isWithinBannerRange && !isOwner)
+                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID()))
                     event.setUseBlock(Event.Result.DENY);
             });
         }
@@ -62,7 +62,7 @@ public class ForgeEvents {
                 boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
-                if (isWithinBannerRange && !isOwner)
+                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID()))
                     event.setCanceled(true);
             });
         }

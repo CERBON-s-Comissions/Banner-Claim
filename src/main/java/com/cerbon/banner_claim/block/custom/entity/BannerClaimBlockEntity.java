@@ -5,6 +5,7 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
 import com.cerbon.banner_claim.particle.BCParticles;
+import com.cerbon.banner_claim.util.mixin.IServerPlayerMixin;
 import com.cerbon.cerbons_api.api.general.particle.ClientParticleBuilder;
 import com.cerbon.cerbons_api.api.static_utilities.RandomUtils;
 import com.cerbon.cerbons_api.api.static_utilities.Vec3Colors;
@@ -15,6 +16,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Nameable;
@@ -30,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +46,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     private Component name;
     private BannerTier bannerTier;
     private UUID ownerUUID;
+
+    public HashSet<UUID> ownerGroup = new HashSet<>();
 
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
@@ -104,6 +110,18 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
         if (this.ownerUUID != null)
             tag.putUUID("Owner", ownerUUID);
+
+        if (getOwner() != null)
+             ownerGroup = ((IServerPlayerMixin) getOwner()).bc_getPlayersInGroup();
+
+        if (!ownerGroup.isEmpty()) {
+            ListTag uuidList = new ListTag();
+
+            for (UUID uuid : ownerGroup)
+                uuidList.add(StringTag.valueOf(uuid.toString()));
+
+            tag.put("OwnerGroup", uuidList);
+        }
     }
 
     @Override
@@ -118,6 +136,13 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
         if (tag.contains("Owner"))
             ownerUUID = tag.getUUID("Owner");
+
+        if (tag.contains("OwnerGroup")) {
+            ListTag uuidList = tag.getList("OwnerGroup", 8);
+
+            for (Tag uuid : uuidList)
+                ownerGroup.add(UUID.fromString(uuid.getAsString()));
+        }
     }
 
     @Override
