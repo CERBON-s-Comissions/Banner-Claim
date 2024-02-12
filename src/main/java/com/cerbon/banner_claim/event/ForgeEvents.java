@@ -5,6 +5,8 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.capability.custom.ChunkBlockCacheProvider;
 import com.cerbon.banner_claim.util.BCUtils;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -12,6 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -88,5 +91,19 @@ public class ForgeEvents {
             if (Math.abs(bannerClaimPos.getX() - event.getEntity().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getEntity().getY() && Math.abs(bannerClaimPos.getZ() - event.getEntity().getZ()) <= bannerTierRange)
                 event.setResult(Event.Result.DENY);
         });
+    }
+
+    @SubscribeEvent
+    public static void customCommands(RegisterCommandsEvent event){
+        var claimCommands = Commands.literal("bannerclaim");
+
+        claimCommands.then(
+                Commands.literal("group")
+                        .then(Commands.literal("add").then(Commands.argument("players", GameProfileArgument.gameProfile()).suggests(BCUtils::suggestPlayers).executes(BCUtils::addToGroup)))
+                        .then(Commands.literal("remove").then(Commands.argument("players", GameProfileArgument.gameProfile()).suggests(BCUtils::suggestPlayersInGroup).executes(BCUtils::removeFromGroup)))
+                        .then(Commands.literal("players").executes(BCUtils::showAllPlayers))
+        );
+
+        event.getDispatcher().register(claimCommands);
     }
 }

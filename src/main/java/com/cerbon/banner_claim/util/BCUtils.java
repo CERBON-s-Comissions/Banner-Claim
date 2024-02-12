@@ -4,8 +4,20 @@ import com.cerbon.banner_claim.block.BCBlocks;
 import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.capability.BCCapabilities;
+import com.cerbon.banner_claim.util.mixin.IServerPlayerMixin;
+import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,6 +25,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class BCUtils {
@@ -39,5 +53,70 @@ public class BCUtils {
                     }
                 }
         });
+    }
+
+    public static int addToGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
+
+        for (GameProfile prof : GameProfileArgument.getGameProfiles(context, "players")) {
+            if (playerMixin.bc_getPlayersInGroup().contains(prof.getId())) {
+                player.displayClientMessage(Component.literal(prof.getName() + " has already being added to the group").withStyle(ChatFormatting.RED), false);
+                return 0;
+            }
+
+            playerMixin.bc_addPlayerToGroup(prof.getId());
+            player.displayClientMessage(Component.literal("Successfully added " + prof.getName() + " to the group").withStyle(ChatFormatting.GREEN), false);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public static int removeFromGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
+
+        for (GameProfile prof : GameProfileArgument.getGameProfiles(context, "players")) {
+            if (!playerMixin.bc_getPlayersInGroup().contains(prof.getId())) {
+                player.displayClientMessage(Component.literal(prof.getName() + " is not in the group").withStyle(ChatFormatting.RED), false);
+                return 0;
+            }
+
+            playerMixin.bc_removePlayerFromGroup(prof.getId());
+            player.displayClientMessage(Component.literal("Successfully removed " + prof.getName() + " from the group").withStyle(ChatFormatting.GREEN), false);
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public static int showAllPlayers(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
+
+        if (playerMixin.bc_getPlayersInGroup().isEmpty()) {
+            player.displayClientMessage(Component.literal("Group is empty").withStyle(ChatFormatting.RED), false);
+            return 0;
+        }
+
+        for(UUID playerUUID : playerMixin.bc_getPlayersInGroup())
+            player.displayClientMessage(Component.literal(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString()).withStyle(ChatFormatting.GREEN), false);
+
+        return 1;
+    }
+
+    public static CompletableFuture<Suggestions> suggestPlayersInGroup(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
+
+        for(UUID playerUUID : playerMixin.bc_getPlayersInGroup())
+            builder.suggest(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString());
+
+        return builder.buildFuture();
+    }
+
+    public static CompletableFuture<Suggestions> suggestPlayers(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+        return SharedSuggestionProvider.suggest(context.getSource().getServer().getPlayerList().getPlayerNamesArray(), builder);
     }
 }
