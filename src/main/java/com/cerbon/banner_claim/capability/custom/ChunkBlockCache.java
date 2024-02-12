@@ -19,10 +19,12 @@ public class ChunkBlockCache {
     }
 
     public List<BlockPos> getBlocksFromChunk(ChunkPos chunkPos, Block... blocks) {
+        if (!map.containsKey(chunkPos)) return null;
+
         List<BlockPos> positions = new ArrayList<>();
 
         for (Block block : blocks)
-            if (map.containsKey(chunkPos) && map.get(chunkPos).containsKey(block))
+            if (map.get(chunkPos).containsKey(block))
                 positions = map.get(chunkPos).get(block).stream().toList();
 
         return positions;

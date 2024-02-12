@@ -44,6 +44,7 @@ public class ForgeEvents {
                 for (int x = chunkPos.x - 8; x <= chunkPos.x + 8; x++)
                     for (int z = chunkPos.z - 8; z <= chunkPos.z + 8; z++) {
                         List<BlockPos> blocks = capability.getBlocksFromChunk(new ChunkPos(x, z), BCBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).toArray(Block[]::new));
+                        if(blocks == null) continue;
 
                         for (BlockPos blockPos : blocks) {
                             BlockEntity blockEntity = serverPlayer.level().getBlockEntity(blockPos);
@@ -76,6 +77,7 @@ public class ForgeEvents {
             for (int x = chunkPos.x - 8; x <= chunkPos.x + 8; x++)
                 for (int z = chunkPos.z - 8; z <= chunkPos.z + 8; z++) {
                     List<BlockPos> blocks = capability.getBlocksFromChunk(new ChunkPos(x, z), BCBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).toArray(Block[]::new));
+                    if(blocks == null) continue;
 
                     for (BlockPos blockPos : blocks) {
                         BlockEntity blockEntity = event.getLevel().getBlockEntity(blockPos);
@@ -101,6 +103,7 @@ public class ForgeEvents {
             for (int x = chunkPos.x - 8; x <= chunkPos.x + 8; x++)
                 for (int z = chunkPos.z - 8; z <= chunkPos.z + 8; z++) {
                     List<BlockPos> blocks = capability.getBlocksFromChunk(new ChunkPos(x, z), BCBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).toArray(Block[]::new));
+                    if(blocks == null) continue;
 
                     for (BlockPos blockPos : blocks) {
                         BlockEntity blockEntity = event.getEntity().level().getBlockEntity(blockPos);
