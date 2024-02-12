@@ -31,7 +31,14 @@ public class ChunkBlockCache {
     }
 
     public void removeFromChunk(ChunkPos chunkPos, Block block, BlockPos pos) {
-        if (map.containsKey(chunkPos) && map.get(chunkPos).containsKey(block))
+        if (map.containsKey(chunkPos) && map.get(chunkPos).containsKey(block)) {
             map.get(chunkPos).get(block).remove(pos);
+
+            if (map.get(chunkPos).get(block).isEmpty())
+                map.get(chunkPos).remove(block);
+
+            if (map.get(chunkPos).isEmpty())
+                map.remove(chunkPos);
+        }
     }
 }
