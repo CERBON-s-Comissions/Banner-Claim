@@ -21,6 +21,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -259,6 +261,11 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
                             Particles.particleFactory.build(randYPos(x + RandomUtils.randDouble(0.5), player, z), Vec3.ZERO);
                     }
                 }
+            }
+        } else {
+            for (Player player : playersInBox) {
+                if (player != bannerClaim.getOwner() && !bannerClaim.ownerGroup.contains(player.getUUID()))
+                    player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 20, 1));
             }
         }
     }
