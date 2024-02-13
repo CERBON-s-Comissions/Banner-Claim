@@ -2,17 +2,22 @@ package com.cerbon.banner_claim.event;
 
 import com.cerbon.banner_claim.BannerClaim;
 import com.cerbon.banner_claim.block.custom.BannerTier;
+import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.capability.custom.ChunkBlockCacheProvider;
 import com.cerbon.banner_claim.util.BCUtils;
+import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
@@ -64,6 +69,21 @@ public class ForgeEvents {
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID()))
                     event.setCanceled(true);
+
+                else if (isWithinBannerRange) {
+                    if (event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock) {
+                        serverPlayer.displayClientMessage(Component.literal("You can't claim this area. It's already claimed by: " + bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
+                        event.setCanceled(true);
+                    }
+                }
+                else if (event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock bannerClaimBlock) {
+                    AABB placedBlockArea = BannerClaimBlockEntity.getAffectingBox(serverPlayer.level(), VecUtils.asVec3(event.getPos()), bannerClaimBlock.getTier());
+
+                    if (placedBlockArea.intersects(BannerClaimBlockEntity.getAffectingBox(serverPlayer.level(), VecUtils.asVec3(bannerClaimPos), bannerClaimBlockEntity.getBannerTier()))) {
+                        serverPlayer.displayClientMessage(Component.literal("You can’t claim this area with your current banner. It conflicts with another banner placed nearby.").withStyle(ChatFormatting.RED), false);
+                        event.setCanceled(true);
+                    }
+                }
             });
         }
     }

@@ -36,7 +36,7 @@ public class BCUtils {
             int rangeToCheck = Math.round((float) Arrays.stream(BannerTier.values())
                     .mapToInt(BannerClaimBlockEntity::getBannerTierRange)
                     .max()
-                    .orElse(0) / 16.0f);
+                    .orElse(0) / 8.0f);
 
             for (int x = chunkPos.x - rangeToCheck; x <= chunkPos.x + rangeToCheck; x++)
                 for (int z = chunkPos.z - rangeToCheck; z <= chunkPos.z + rangeToCheck; z++) {
