@@ -61,12 +61,12 @@ public class BCUtils {
 
         for (GameProfile prof : GameProfileArgument.getGameProfiles(context, "players")) {
             if (playerMixin.bc_getPlayersInGroup().contains(prof.getId())) {
-                player.displayClientMessage(Component.literal(prof.getName() + " has already being added to the group").withStyle(ChatFormatting.RED), false);
+                player.displayClientMessage(Component.translatable( "command.banner_claim.cant_add", prof.getName()).withStyle(ChatFormatting.RED), false);
                 return 0;
             }
 
             playerMixin.bc_addPlayerToGroup(prof.getId());
-            player.displayClientMessage(Component.literal("Successfully added " + prof.getName() + " to the group").withStyle(ChatFormatting.GREEN), false);
+            player.displayClientMessage(Component.translatable("command.banner_claim.add_successful", prof.getName()).withStyle(ChatFormatting.GREEN), false);
             return 1;
         }
 
@@ -79,12 +79,12 @@ public class BCUtils {
 
         for (GameProfile prof : GameProfileArgument.getGameProfiles(context, "players")) {
             if (!playerMixin.bc_getPlayersInGroup().contains(prof.getId())) {
-                player.displayClientMessage(Component.literal(prof.getName() + " is not in the group").withStyle(ChatFormatting.RED), false);
+                player.displayClientMessage(Component.translatable( "command.banner_claim.cant_remove", prof.getName()).withStyle(ChatFormatting.RED), false);
                 return 0;
             }
 
             playerMixin.bc_removePlayerFromGroup(prof.getId());
-            player.displayClientMessage(Component.literal("Successfully removed " + prof.getName() + " from the group").withStyle(ChatFormatting.GREEN), false);
+            player.displayClientMessage(Component.translatable("command.banner_claim.remove_successfully", prof.getName()).withStyle(ChatFormatting.GREEN), false);
             return 1;
         }
 
@@ -96,7 +96,7 @@ public class BCUtils {
         IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
 
         if (playerMixin.bc_getPlayersInGroup().isEmpty()) {
-            player.displayClientMessage(Component.literal("Group is empty").withStyle(ChatFormatting.RED), false);
+            player.displayClientMessage(Component.translatable("command.banner_claim.players.empty").withStyle(ChatFormatting.RED), false);
             return 0;
         }
 

@@ -49,8 +49,10 @@ public class ForgeEvents {
                 boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
-                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID()))
+                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.interact_block", bannerClaimBlockEntity.getOwner().getName().getString()), false);
                     event.setUseBlock(Event.Result.DENY);
+                }
             });
         }
     }
@@ -67,20 +69,23 @@ public class ForgeEvents {
                 boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
-                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID()))
+                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_block", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
                     event.setCanceled(true);
+                }
 
                 else if (isWithinBannerRange) {
                     if (event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock) {
-                        serverPlayer.displayClientMessage(Component.literal("You can't claim this area. It's already claimed by: " + bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
+                        serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_within_range", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
                         event.setCanceled(true);
                     }
                 }
+
                 else if (event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock bannerClaimBlock) {
                     AABB placedBlockArea = BannerClaimBlockEntity.getAffectingBox(serverPlayer.level(), VecUtils.asVec3(event.getPos()), bannerClaimBlock.getTier());
 
                     if (placedBlockArea.intersects(BannerClaimBlockEntity.getAffectingBox(serverPlayer.level(), VecUtils.asVec3(bannerClaimPos), bannerClaimBlockEntity.getBannerTier()))) {
-                        serverPlayer.displayClientMessage(Component.literal("You can’t claim this area with your current banner. It conflicts with another banner placed nearby.").withStyle(ChatFormatting.RED), false);
+                        serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_outside_range").withStyle(ChatFormatting.RED), false);
                         event.setCanceled(true);
                     }
                 }
