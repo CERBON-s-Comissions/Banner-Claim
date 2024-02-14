@@ -5,6 +5,7 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.capability.custom.ChunkBlockCacheProvider;
+import com.cerbon.banner_claim.util.BCTags;
 import com.cerbon.banner_claim.util.BCUtils;
 import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
 import net.minecraft.ChatFormatting;
@@ -67,6 +68,7 @@ public class ForgeEvents {
                 int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
 
                 boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
+                boolean isWithinProtectionRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= 5 && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= 5;
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
@@ -74,11 +76,9 @@ public class ForgeEvents {
                     event.setCanceled(true);
                 }
 
-                else if (isWithinBannerRange) {
-                    if (event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock) {
-                        serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_within_range", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
-                        event.setCanceled(true);
-                    }
+                else if (isWithinBannerRange && event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock) {
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_within_range", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
+                    event.setCanceled(true);
                 }
 
                 else if (event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock bannerClaimBlock) {
@@ -88,6 +88,11 @@ public class ForgeEvents {
                         serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_outside_range").withStyle(ChatFormatting.RED), false);
                         event.setCanceled(true);
                     }
+                }
+
+                else if (isWithinProtectionRange && !event.getPlacedBlock().is(BCTags.BANNER_PROTECTION)) {
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.protection_block", 5).withStyle(ChatFormatting.RED), false);
+                    event.setCanceled(true);
                 }
             });
         }

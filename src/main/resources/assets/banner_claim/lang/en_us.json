@@ -16,5 +16,6 @@
   "command.banner_claim.add_successful": "Successfully added %s to the group.",
   "command.banner_claim.cant_remove": "%s is not in the group.",
   "command.banner_claim.remove_successfully": "Successfully removed %s from the group.",
-  "command.banner_claim.players.empty": "Group is empty."
+  "command.banner_claim.players.empty": "Group is empty.",
+  "warn.banner_claim.protection_block": "You can’t use this block to protect the banner within a range of %s blocks in the xz direction and infinite range in the y direction."
 }
