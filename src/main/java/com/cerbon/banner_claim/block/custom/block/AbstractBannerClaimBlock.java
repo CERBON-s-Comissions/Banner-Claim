@@ -3,11 +3,15 @@ package com.cerbon.banner_claim.block.custom.block;
 import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
+import com.cerbon.banner_claim.util.BCTags;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractBannerBlock;
@@ -15,9 +19,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     private final BannerTier tier;
@@ -52,6 +59,24 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof BannerClaimBlockEntity bannerClaimBlockEntity ? bannerClaimBlockEntity.getItem() : super.getCloneItemStack(level, pos, state);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        if (context.getPlayer() != null && context.getPlayer().isCreative() || context.getPlayer().isSpectator()) return super.getStateForPlacement(context);
+
+        AABB box = new AABB(context.getClickedPos()).inflate(5, 0, 5).expandTowards(0, context.getLevel().getMaxBuildHeight(), 0);
+
+        List<BlockState> blocksAround = context.getLevel().getBlockStates(box).filter(state -> !state.is(BCTags.BANNER_PROTECTION) && !state.isAir() && !state.canBeReplaced()).toList();
+        boolean hasBlockAround = !blocksAround.isEmpty();
+
+        if (hasBlockAround) {
+            context.getPlayer().displayClientMessage(Component.translatable("warn.banner_claim.place_banner", 5, 5).withStyle(ChatFormatting.RED), false);
+            return null;
+        }
+
+        return super.getStateForPlacement(context);
     }
 
     @Nullable

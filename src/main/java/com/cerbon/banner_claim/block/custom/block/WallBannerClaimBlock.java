@@ -50,7 +50,9 @@ public class WallBannerClaimBlock extends AbstractBannerClaimBlock {
         return SHAPES.get(state.getValue(FACING));
     }
 
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        if (super.getStateForPlacement(context) == null) return null;
+
         BlockState blockstate = this.defaultBlockState();
         LevelReader levelreader = context.getLevel();
         BlockPos blockpos = context.getClickedPos();

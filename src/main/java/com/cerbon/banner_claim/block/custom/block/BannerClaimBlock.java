@@ -43,7 +43,8 @@ public class BannerClaimBlock extends AbstractBannerClaimBlock {
         return SHAPE;
     }
 
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
+        if (super.getStateForPlacement(context) == null) return null;
         return this.defaultBlockState().setValue(ROTATION, RotationSegment.convertToSegment(context.getRotation() + 180.0F));
     }
 
