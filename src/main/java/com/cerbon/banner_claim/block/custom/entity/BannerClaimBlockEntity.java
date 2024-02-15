@@ -247,7 +247,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     }
 
     public Player getOwner() {
-        if (level != null)
+        if (level != null && ownerUUID != null)
             return level.getPlayerByUUID(ownerUUID);
 
         return null;
