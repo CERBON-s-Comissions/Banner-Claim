@@ -52,7 +52,7 @@ public class ForgeEvents {
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
-                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.interact_block", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.interact_block", bannerClaimBlockEntity.getOwnerName()).withStyle(ChatFormatting.RED), false);
                     event.setUseBlock(Event.Result.DENY);
                 }
             });
@@ -73,12 +73,12 @@ public class ForgeEvents {
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
-                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_block", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_block", bannerClaimBlockEntity.getOwnerName()).withStyle(ChatFormatting.RED), false);
                     event.setCanceled(true);
                 }
 
                 else if (isWithinBannerRange && event.getPlacedBlock().getBlock() instanceof AbstractBannerClaimBlock) {
-                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_within_range", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.place_banner_within_range", bannerClaimBlockEntity.getOwnerName()).withStyle(ChatFormatting.RED), false);
                     event.setCanceled(true);
                 }
 
@@ -92,7 +92,7 @@ public class ForgeEvents {
                 }
 
                 else if (isWithinProtectionRange && !event.getPlacedBlock().is(BCTags.BANNER_PROTECTION)) {
-                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.protection_block", 5).withStyle(ChatFormatting.RED), false);
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.protection_block", BCCommonConfig.PROTECTION_RANGE.get()).withStyle(ChatFormatting.RED), false);
                     event.setCanceled(true);
                 }
             });

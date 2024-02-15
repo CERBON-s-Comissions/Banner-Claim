@@ -52,6 +52,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     private UUID ownerUUID;
 
     public HashSet<UUID> ownerGroup = new HashSet<>();
+    public String ownerName;
 
     public int timeToActivate = BCCommonConfig.TIME_TO_ACTIVATE.get() * 20;
 
@@ -116,6 +117,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
         tag.putInt("TimeToActivate", timeToActivate);
 
+        if (this.ownerName != null)
+            tag.putString("OwnerName", ownerName);
+
         if (this.ownerUUID != null)
             tag.putUUID("Owner", ownerUUID);
 
@@ -143,6 +147,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         this.patterns = null;
 
         timeToActivate = tag.getInt("TimeToActivate");
+
+        if (tag.contains("OwnerName"))
+            ownerName = tag.getString("OwnerName");
 
         if (tag.contains("Owner"))
             ownerUUID = tag.getUUID("Owner");
@@ -244,6 +251,14 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
             return level.getPlayerByUUID(ownerUUID);
 
         return null;
+    }
+
+    public void setOwnerName(String name) {
+        ownerName = name;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
     }
 
     public BannerTier getBannerTier() {
