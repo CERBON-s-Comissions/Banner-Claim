@@ -5,6 +5,7 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.config.BCCommonConfig;
 import com.cerbon.banner_claim.util.BCTags;
+import com.cerbon.banner_claim.util.mixin.IServerPlayerMixin;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -67,14 +68,20 @@ public class AbstractBannerClaimBlock extends AbstractBannerBlock {
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
         if (context.getPlayer() != null && context.getPlayer().isCreative() || context.getPlayer().isSpectator()) return super.getStateForPlacement(context);
 
-        AABB box = new AABB(context.getClickedPos()).inflate(BCCommonConfig.PROTECTION_RANGE.get(), 0, BCCommonConfig.PROTECTION_RANGE.get()).expandTowards(0, context.getLevel().getMaxBuildHeight(), 0);
-
-        List<BlockState> blocksAround = context.getLevel().getBlockStates(box).filter(state -> !state.is(BCTags.BANNER_PROTECTION) && !state.isAir() && !state.canBeReplaced()).toList();
-        boolean hasBlockAround = !blocksAround.isEmpty();
-
-        if (hasBlockAround) {
-            context.getPlayer().displayClientMessage(Component.translatable("warn.banner_claim.place_banner", BCCommonConfig.PROTECTION_RANGE.get(), BCCommonConfig.PROTECTION_RANGE.get()).withStyle(ChatFormatting.RED), false);
+        if (!context.getLevel().isClientSide && context.getPlayer() != null && ((IServerPlayerMixin)context.getPlayer()).bc_getCooldown() > 0) {
+            context.getPlayer().displayClientMessage(Component.translatable("warn.banner_claim.place_banner_cooldown", ((IServerPlayerMixin)context.getPlayer()).bc_getCooldown() / 20).withStyle(ChatFormatting.RED), false);
             return null;
+        }
+        else if (!context.getLevel().isClientSide) {
+            AABB box = new AABB(context.getClickedPos()).inflate(BCCommonConfig.PROTECTION_RANGE.get(), 0, BCCommonConfig.PROTECTION_RANGE.get()).expandTowards(0, context.getLevel().getMaxBuildHeight(), 0);
+
+            List<BlockState> blocksAround = context.getLevel().getBlockStates(box).filter(state -> !state.is(BCTags.BANNER_PROTECTION) && !state.isAir() && !state.canBeReplaced()).toList();
+            boolean hasBlockAround = !blocksAround.isEmpty();
+
+            if (hasBlockAround) {
+                context.getPlayer().displayClientMessage(Component.translatable("warn.banner_claim.place_banner", BCCommonConfig.PROTECTION_RANGE.get(), BCCommonConfig.PROTECTION_RANGE.get()).withStyle(ChatFormatting.RED), false);
+                return null;
+            }
         }
 
         return super.getStateForPlacement(context);

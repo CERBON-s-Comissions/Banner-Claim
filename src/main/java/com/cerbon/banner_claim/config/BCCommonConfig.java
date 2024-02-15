@@ -15,7 +15,7 @@ public class BCCommonConfig {
     public static final ForgeConfigSpec.ConfigValue<Integer> DIAMOND_BANNER_RANGE;
     public static final ForgeConfigSpec.ConfigValue<Integer> NETHERITE_BANNER_RANGE;
 
-    public static final ForgeConfigSpec.ConfigValue<Integer> TIME_TO_ACTIVATE;
+    public static final ForgeConfigSpec.ConfigValue<Integer> TIME_TO_ACTIVATE, COOLDOWN;
 
     static {
         CLAIM_DEPTH = BUILDER.define("Claim Depth", 10);
@@ -29,6 +29,7 @@ public class BCCommonConfig {
 
         TIME_TO_ACTIVATE = BUILDER.comment("In seconds!")
                                   .define("Time To Activate", 15);
+        COOLDOWN = BUILDER.define("Cooldown", 30);
 
         SPEC = BUILDER.build();
     }

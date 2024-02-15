@@ -19,6 +19,8 @@ import java.util.UUID;
 public abstract class ServerPlayerMixin implements IServerPlayerMixin {
     @Unique private final HashSet<UUID> bc_playersInGroup = new HashSet<>();
 
+    @Unique private int bc_Cooldown;
+
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void bc_addCustomData(CompoundTag tag, CallbackInfo ci) {
         if (!bc_playersInGroup.isEmpty()) {
@@ -29,6 +31,8 @@ public abstract class ServerPlayerMixin implements IServerPlayerMixin {
 
             tag.put("OwnerGroup", uuidList);
         }
+
+        tag.putInt("BannerCooldown", bc_Cooldown);
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
@@ -39,6 +43,14 @@ public abstract class ServerPlayerMixin implements IServerPlayerMixin {
             for (Tag uuid : uuidList)
                 bc_addPlayerToGroup(UUID.fromString(uuid.getAsString()));
         }
+
+        bc_Cooldown = tag.getInt("BannerCooldown");
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void bc_tick(CallbackInfo ci) {
+        if (bc_Cooldown > 0)
+            bc_Cooldown--;
     }
 
     @Override
@@ -54,5 +66,15 @@ public abstract class ServerPlayerMixin implements IServerPlayerMixin {
     @Override
     public void bc_removePlayerFromGroup(UUID player) {
         bc_playersInGroup.remove(player);
+    }
+
+    @Override
+    public int bc_getCooldown() {
+        return bc_Cooldown;
+    }
+
+    @Override
+    public void bc_setCooldown(int bc_Cooldown) {
+        this.bc_Cooldown = bc_Cooldown;
     }
 }

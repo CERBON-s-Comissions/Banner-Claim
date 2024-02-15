@@ -250,6 +250,14 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         return this.bannerTier;
     }
 
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+
+        if (level != null && !level.isClientSide && getOwner() != null)
+            ((IServerPlayerMixin) getOwner()).bc_setCooldown(BCCommonConfig.COOLDOWN.get() * 20);
+    }
+
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
         ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
 

@@ -9,4 +9,8 @@ public interface IServerPlayerMixin {
     void bc_addPlayerToGroup(UUID player);
 
     void bc_removePlayerFromGroup(UUID player);
+
+    int bc_getCooldown();
+
+    void bc_setCooldown(int bc_Cooldown);
 }
