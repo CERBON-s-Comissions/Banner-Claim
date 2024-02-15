@@ -1,6 +1,7 @@
 package com.cerbon.banner_claim.util.mixin;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public interface IServerPlayerMixin {
@@ -9,6 +10,8 @@ public interface IServerPlayerMixin {
     void bc_addPlayerToGroup(UUID player);
 
     void bc_removePlayerFromGroup(UUID player);
+
+    List<String> bc_getPlayersInGroupName();
 
     int bc_getCooldown();
 

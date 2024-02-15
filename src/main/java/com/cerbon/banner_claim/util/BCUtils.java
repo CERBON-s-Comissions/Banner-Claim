@@ -27,7 +27,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
@@ -86,6 +85,7 @@ public class BCUtils {
             }
 
             playerMixin.bc_removePlayerFromGroup(prof.getId());
+            playerMixin.bc_getPlayersInGroupName().remove(prof.getName());
             player.displayClientMessage(Component.translatable("command.banner_claim.remove_successfully", prof.getName()).withStyle(ChatFormatting.GREEN), false);
             return 1;
         }
@@ -102,8 +102,8 @@ public class BCUtils {
             return 0;
         }
 
-        for(UUID playerUUID : playerMixin.bc_getPlayersInGroup())
-            player.displayClientMessage(Component.literal(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString()).withStyle(ChatFormatting.GOLD), false);
+        for(String name : playerMixin.bc_getPlayersInGroupName())
+            player.displayClientMessage(Component.literal(name).withStyle(ChatFormatting.GOLD), false);
 
         return 1;
     }
@@ -120,8 +120,8 @@ public class BCUtils {
         ServerPlayer player = context.getSource().getPlayerOrException();
         IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
 
-        for(UUID playerUUID : playerMixin.bc_getPlayersInGroup())
-            builder.suggest(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString());
+        for(String name : playerMixin.bc_getPlayersInGroupName())
+            builder.suggest(name);
 
         return builder.buildFuture();
     }
