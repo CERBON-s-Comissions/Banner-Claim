@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "claim_banners",
+  "key": {
+    "B": {
+      "tag": "minecraft:banners"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "S": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "pattern": [
+    "ISI",
+    "SBS",
+    "ISI"
+  ],
+  "result": {
+    "item": "banner_claim:iron_banner"
+  },
+  "show_notification": true
+}

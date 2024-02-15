@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "claim_banners",
+  "key": {
+    "B": {
+      "item": "banner_claim:diamond_banner"
+    },
+    "T": {
+      "item": "minecraft:netherite_block"
+    }
+  },
+  "pattern": [
+    " T ",
+    "TBT",
+    " T "
+  ],
+  "result": {
+    "item": "banner_claim:netherite_banner"
+  },
+  "show_notification": true
+}

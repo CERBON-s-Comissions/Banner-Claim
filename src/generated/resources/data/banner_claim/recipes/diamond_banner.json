@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "claim_banners",
+  "key": {
+    "B": {
+      "item": "banner_claim:emerald_banner"
+    },
+    "T": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "pattern": [
+    " T ",
+    "TBT",
+    " T "
+  ],
+  "result": {
+    "item": "banner_claim:diamond_banner"
+  },
+  "show_notification": true
+}
