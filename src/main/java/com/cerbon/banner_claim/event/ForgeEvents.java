@@ -128,12 +128,16 @@ public class ForgeEvents {
     public static void customCommands(RegisterCommandsEvent event){
         var claimCommands = Commands.literal("bannerclaim");
 
-        claimCommands.then(
-                Commands.literal("group")
-                        .then(Commands.literal("add").then(Commands.argument("players", GameProfileArgument.gameProfile()).suggests(BCUtils::suggestPlayers).executes(BCUtils::addToGroup)))
-                        .then(Commands.literal("remove").then(Commands.argument("players", GameProfileArgument.gameProfile()).suggests(BCUtils::suggestPlayersInGroup).executes(BCUtils::removeFromGroup)))
-                        .then(Commands.literal("players").executes(BCUtils::showAllPlayers))
-        );
+        claimCommands
+                .then(
+                        Commands.literal("group")
+                                .then(Commands.literal("add").then(Commands.argument("players", GameProfileArgument.gameProfile()).suggests(BCUtils::suggestPlayers).executes(BCUtils::addToGroup)))
+                                .then(Commands.literal("remove").then(Commands.argument("players", GameProfileArgument.gameProfile()).suggests(BCUtils::suggestPlayersInGroup).executes(BCUtils::removeFromGroup)))
+                                .then(Commands.literal("players").executes(BCUtils::showAllPlayers))
+                )
+                .then(
+                        Commands.literal("showProtections").executes(BCUtils::showProtections)
+                );
 
         event.getDispatcher().register(claimCommands);
     }

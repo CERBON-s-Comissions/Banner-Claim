@@ -5,6 +5,7 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.capability.BCCapabilities;
 import com.cerbon.banner_claim.util.mixin.IServerPlayerMixin;
+import com.cerbon.cerbons_api.api.static_utilities.RegistryUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -21,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
@@ -102,6 +104,14 @@ public class BCUtils {
 
         for(UUID playerUUID : playerMixin.bc_getPlayersInGroup())
             player.displayClientMessage(Component.literal(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString()).withStyle(ChatFormatting.GREEN), false);
+
+        return 1;
+    }
+
+    public static int showProtections(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+
+        ForgeRegistries.BLOCKS.getEntries().stream().filter(block -> block.getValue().defaultBlockState().is(BCTags.BANNER_PROTECTION)).forEach(block -> player.displayClientMessage(Component.literal(RegistryUtils.getItemKeyAsString(block.getValue().asItem())).withStyle(ChatFormatting.GOLD), false));
 
         return 1;
     }
