@@ -103,7 +103,7 @@ public class BCUtils {
         }
 
         for(UUID playerUUID : playerMixin.bc_getPlayersInGroup())
-            player.displayClientMessage(Component.literal(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString()).withStyle(ChatFormatting.GREEN), false);
+            player.displayClientMessage(Component.literal(context.getSource().getLevel().getPlayerByUUID(playerUUID).getName().getString()).withStyle(ChatFormatting.GOLD), false);
 
         return 1;
     }
