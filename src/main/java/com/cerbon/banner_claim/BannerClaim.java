@@ -2,13 +2,16 @@ package com.cerbon.banner_claim;
 
 import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.BCBlocks;
+import com.cerbon.banner_claim.config.BCCommonConfig;
 import com.cerbon.banner_claim.item.BCItems;
 import com.cerbon.banner_claim.item.BCTabs;
 import com.cerbon.banner_claim.misc.BCRecipes;
 import com.cerbon.banner_claim.particle.BCParticles;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -28,5 +31,8 @@ public class BannerClaim {
 
         BCParticles.register(modEventBus);
         BCRecipes.register(modEventBus);
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BCCommonConfig.SPEC, MOD_ID + "-client.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BCCommonConfig.SPEC, MOD_ID + "-common.toml");
     }
 }

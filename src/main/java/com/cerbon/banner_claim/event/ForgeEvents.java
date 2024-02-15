@@ -5,6 +5,7 @@ import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.entity.BannerClaimBlockEntity;
 import com.cerbon.banner_claim.capability.custom.ChunkBlockCacheProvider;
+import com.cerbon.banner_claim.config.BCCommonConfig;
 import com.cerbon.banner_claim.util.BCTags;
 import com.cerbon.banner_claim.util.BCUtils;
 import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
@@ -47,7 +48,7 @@ public class ForgeEvents {
                 BannerTier tier = bannerClaimBlockEntity.getBannerTier();
                 int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
 
-                boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
+                boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
@@ -67,8 +68,8 @@ public class ForgeEvents {
                 BannerTier tier = bannerClaimBlockEntity.getBannerTier();
                 int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
 
-                boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
-                boolean isWithinProtectionRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= 5 && Math.abs(bannerClaimPos.getY() - 10) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= 5;
+                boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
+                boolean isWithinProtectionRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= BCCommonConfig.PROTECTION_RANGE.get() && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= BCCommonConfig.PROTECTION_RANGE.get();
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
@@ -106,7 +107,7 @@ public class ForgeEvents {
             BannerTier tier = bannerClaimBlockEntity.getBannerTier();
             int bannerTierRange  = BannerClaimBlockEntity.getBannerTierRange(tier);
 
-            event.getAffectedBlocks().removeIf(pos -> Math.abs(bannerClaimPos.getX() - pos.getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= pos.getY() && Math.abs(bannerClaimPos.getZ() - pos.getZ()) <= bannerTierRange);
+            event.getAffectedBlocks().removeIf(pos -> Math.abs(bannerClaimPos.getX() - pos.getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= pos.getY() && Math.abs(bannerClaimPos.getZ() - pos.getZ()) <= bannerTierRange);
         });
     }
 
@@ -118,7 +119,7 @@ public class ForgeEvents {
             BannerTier tier = bannerClaimBlockEntity.getBannerTier();
             int bannerTierRange  = BannerClaimBlockEntity.getBannerTierRange(tier);
 
-            if (Math.abs(bannerClaimPos.getX() - event.getEntity().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - 10) <= event.getEntity().getY() && Math.abs(bannerClaimPos.getZ() - event.getEntity().getZ()) <= bannerTierRange)
+            if (Math.abs(bannerClaimPos.getX() - event.getEntity().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= event.getEntity().getY() && Math.abs(bannerClaimPos.getZ() - event.getEntity().getZ()) <= bannerTierRange)
                 event.setResult(Event.Result.DENY);
         });
     }

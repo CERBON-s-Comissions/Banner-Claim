@@ -4,6 +4,8 @@ import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.custom.BannerTier;
 import com.cerbon.banner_claim.block.custom.block.AbstractBannerClaimBlock;
 import com.cerbon.banner_claim.block.custom.block.BannerClaimBlock;
+import com.cerbon.banner_claim.config.BCClientConfig;
+import com.cerbon.banner_claim.config.BCCommonConfig;
 import com.cerbon.banner_claim.particle.BCParticles;
 import com.cerbon.banner_claim.util.mixin.IServerPlayerMixin;
 import com.cerbon.cerbons_api.api.general.particle.ClientParticleBuilder;
@@ -249,7 +251,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         List<Player> playersInBox = level.getEntitiesOfClass(Player.class, box);
 
         if (level.isClientSide) {
-            if (level.random.nextFloat() <= 0.1f) {
+            if (BCClientConfig.SHOW_PARTICLES_AROUND_BANNER.get() && level.random.nextFloat() <= 0.1f) {
                 for (Player player : playersInBox) {
                     for (double x : List.of(box.minX, box.maxX)) {
                         for (double z = box.minZ; z <= box.maxZ; z++)
@@ -275,16 +277,16 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     }
 
     public static AABB getAffectingBox(Level level, Vec3 pos, BannerTier tier) {
-        return new AABB(pos.x, pos.y - 10, pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
+        return new AABB(pos.x, pos.y - BCCommonConfig.CLAIM_DEPTH.get(), pos.z, pos.x + 1, level.getHeight(), pos.z + 1).inflate(getBannerTierRange(tier), 0.0, getBannerTierRange(tier));
     }
 
     public static int getBannerTierRange(BannerTier tier) {
         return switch (tier) {
-            case IRON -> 8;
-            case GOLD -> 16;
-            case EMERALD -> 32;
-            case DIAMOND -> 64;
-            case NETHERITE -> 128;
+            case IRON -> BCCommonConfig.IRON_BANNER_RANGE.get();
+            case GOLD -> BCCommonConfig.GOLD_BANNER_RANGE.get();
+            case EMERALD -> BCCommonConfig.EMERALD_BANNER_RANGE.get();
+            case DIAMOND -> BCCommonConfig.DIAMOND_BANNER_RANGE.get();
+            case NETHERITE -> BCCommonConfig.NETHERITE_BANNER_RANGE.get();
         };
     }
 
