@@ -61,6 +61,11 @@ public class BCUtils {
         IServerPlayerMixin playerMixin = (IServerPlayerMixin) player;
 
         for (GameProfile prof : GameProfileArgument.getGameProfiles(context, "players")) {
+            if (!Arrays.stream(context.getSource().getServer().getPlayerList().getPlayerNamesArray()).toList().contains(prof.getName())) {
+                player.displayClientMessage(Component.translatable("warn.banner_claim.cant_add.invalid", prof.getName()).withStyle(ChatFormatting.RED), false);
+                return 0;
+            }
+
             if (playerMixin.bc_getPlayersInGroup().contains(prof.getId())) {
                 player.displayClientMessage(Component.translatable( "command.banner_claim.cant_add", prof.getName()).withStyle(ChatFormatting.RED), false);
                 return 0;
