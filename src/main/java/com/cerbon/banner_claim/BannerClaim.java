@@ -2,6 +2,7 @@ package com.cerbon.banner_claim;
 
 import com.cerbon.banner_claim.block.BCBlockEntities;
 import com.cerbon.banner_claim.block.BCBlocks;
+import com.cerbon.banner_claim.config.BCClientConfig;
 import com.cerbon.banner_claim.config.BCCommonConfig;
 import com.cerbon.banner_claim.item.BCItems;
 import com.cerbon.banner_claim.item.BCTabs;
@@ -32,7 +33,7 @@ public class BannerClaim {
         BCParticles.register(modEventBus);
         BCRecipes.register(modEventBus);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BCCommonConfig.SPEC, MOD_ID + "-client.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BCClientConfig.SPEC, MOD_ID + "-client.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BCCommonConfig.SPEC, MOD_ID + "-common.toml");
     }
 }
