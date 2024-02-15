@@ -53,6 +53,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     public HashSet<UUID> ownerGroup = new HashSet<>();
 
+    public int timeToActivate = BCCommonConfig.TIME_TO_ACTIVATE.get() * 20;
+
     @Nullable private ListTag itemPatterns;
     @Nullable private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
 
@@ -112,6 +114,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         if (this.name != null)
             tag.putString("CustomName", Component.Serializer.toJson(this.name));
 
+        tag.putInt("TimeToActivate", timeToActivate);
+
         if (this.ownerUUID != null)
             tag.putUUID("Owner", ownerUUID);
 
@@ -137,6 +141,8 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
         this.itemPatterns = tag.getList(TAG_PATTERNS, 10);
         this.patterns = null;
+
+        timeToActivate = tag.getInt("TimeToActivate");
 
         if (tag.contains("Owner"))
             ownerUUID = tag.getUUID("Owner");
@@ -246,6 +252,12 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
 
     public static void tick(Level level, BlockPos pos, BlockState state, BannerClaimBlockEntity bannerClaim) {
         ChunkCacheBlockEntity.tick(level, pos, state, bannerClaim);
+
+        if (bannerClaim.timeToActivate > 0) {
+            bannerClaim.timeToActivate--;
+            bannerClaim.setChanged();
+            return;
+        }
 
         AABB box = getAffectingBox(level, VecUtils.asVec3(pos), bannerClaim.getBannerTier());
         List<Player> playersInBox = level.getEntitiesOfClass(Player.class, box);
