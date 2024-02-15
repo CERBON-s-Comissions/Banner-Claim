@@ -48,7 +48,7 @@ public class BCUtils {
                     for (BlockPos blockPos : blocks) {
                         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
 
-                        if (blockEntity instanceof BannerClaimBlockEntity bannerClaim) {
+                        if (blockEntity instanceof BannerClaimBlockEntity bannerClaim && bannerClaim.timeToActivate <= 0) {
                             biConsumer.accept(blockPos, bannerClaim);
                             break;
                         }
