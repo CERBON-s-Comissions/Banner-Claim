@@ -52,7 +52,7 @@ public class ForgeEvents {
                 boolean isOwner = serverPlayer == bannerClaimBlockEntity.getOwner();
 
                 if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(serverPlayer.getUUID())) {
-                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.interact_block", bannerClaimBlockEntity.getOwner().getName().getString()), false);
+                    serverPlayer.displayClientMessage(Component.translatable("warn.banner_claim.interact_block", bannerClaimBlockEntity.getOwner().getName().getString()).withStyle(ChatFormatting.RED), false);
                     event.setUseBlock(Event.Result.DENY);
                 }
             });
