@@ -14,6 +14,7 @@ import com.cerbon.cerbons_api.api.static_utilities.Vec3Colors;
 import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
+import io.redspace.pvp_flagging.core.PlayerFlagManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -50,6 +51,7 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
     private Component name;
     private BannerTier bannerTier;
     private UUID ownerUUID;
+    public boolean isFlagged;
 
     public HashSet<UUID> ownerGroup = new HashSet<>();
     public String ownerName;
@@ -123,8 +125,12 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
         if (this.ownerUUID != null)
             tag.putUUID("Owner", ownerUUID);
 
-        if (getOwner() != null)
-             ownerGroup = ((IServerPlayerMixin) getOwner()).bc_getPlayersInGroup();
+        if (getOwner() != null) {
+            ownerGroup = ((IServerPlayerMixin) getOwner()).bc_getPlayersInGroup();
+            isFlagged = PlayerFlagManager.INSTANCE.isPlayerFlagged(getOwner());
+        }
+
+        tag.putBoolean("IsFlagged", isFlagged);
 
         if (!ownerGroup.isEmpty()) {
             ListTag uuidList = new ListTag();
@@ -160,6 +166,9 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
             for (Tag uuid : uuidList)
                 ownerGroup.add(UUID.fromString(uuid.getAsString()));
         }
+
+        if (tag.contains("IsFlagged"))
+            isFlagged = tag.getBoolean("IsFlagged");
     }
 
     @Override
