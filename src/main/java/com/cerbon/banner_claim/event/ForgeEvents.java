@@ -8,7 +8,9 @@ import com.cerbon.banner_claim.capability.custom.ChunkBlockCacheProvider;
 import com.cerbon.banner_claim.config.BCCommonConfig;
 import com.cerbon.banner_claim.util.BCTags;
 import com.cerbon.banner_claim.util.BCUtils;
+import com.cerbon.cerbons_api.api.static_utilities.MiscUtils;
 import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
+import io.redspace.pvp_flagging.core.PlayerFlagManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
@@ -17,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -37,6 +40,27 @@ public class ForgeEvents {
     public static void onAttachCapabilitiesLevel(AttachCapabilitiesEvent<Level> event) {
         if (event.getObject() == null || event.getObject().getCapability(ChunkBlockCacheProvider.CHUNK_BLOCK_CACHE).isPresent()) return;
         event.addCapability(new ResourceLocation(BannerClaim.MOD_ID, "chunk_block_cache_capability"), new ChunkBlockCacheProvider());
+    }
+
+    @SubscribeEvent
+    public static void onBreakBlock(BlockEvent.BreakEvent event) {
+        if (event.getLevel().isClientSide()) return;
+
+        Player player = event.getPlayer();
+        if (MiscUtils.isModLoaded("pvp_flagging") && !player.isCreative() && !player.isSpectator()) {
+            BCUtils.ifBannerClaimContainsChunkDo(new ChunkPos(event.getPos()), (ServerLevel) player.level(), (bannerClaimPos, bannerClaimBlockEntity) -> {
+                BannerTier tier = bannerClaimBlockEntity.getBannerTier();
+                int bannerTierRange = BannerClaimBlockEntity.getBannerTierRange(tier);
+
+                boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
+                boolean isOwner = player == bannerClaimBlockEntity.getOwner();
+
+                if (isWithinBannerRange && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(player.getUUID()) && !PlayerFlagManager.INSTANCE.isPlayerFlagged(bannerClaimBlockEntity.getOwner())) {
+                    player.displayClientMessage(Component.translatable("warn.banner_claim.break_block", bannerClaimBlockEntity.getOwnerName()).withStyle(ChatFormatting.RED), false);
+                    event.setCanceled(true);
+                }
+            });
+        }
     }
 
     @SubscribeEvent
