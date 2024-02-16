@@ -310,7 +310,11 @@ public class BannerClaimBlockEntity extends ChunkCacheBlockEntity implements Nam
             }
         } else {
             for (Player player : playersInBox) {
-                if (bannerClaim.getOwner() != null && player != bannerClaim.getOwner() && !bannerClaim.ownerGroup.contains(player.getUUID()))
+                if (bannerClaim.getOwner() != null && player == bannerClaim.getOwner()) {
+                    // Do nothing
+                }
+
+                else if (!bannerClaim.ownerGroup.contains(player.getUUID()))
                     player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 20, 1));
             }
         }
