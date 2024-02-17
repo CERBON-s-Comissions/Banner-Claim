@@ -10,6 +10,7 @@ import com.cerbon.banner_claim.util.BCTags;
 import com.cerbon.banner_claim.util.BCUtils;
 import com.cerbon.cerbons_api.api.static_utilities.MiscUtils;
 import com.cerbon.cerbons_api.api.static_utilities.VecUtils;
+import io.redspace.pvp_flagging.core.PlayerFlagManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
@@ -54,7 +55,12 @@ public class ForgeEvents {
                 boolean isWithinBannerRange = Math.abs(bannerClaimPos.getX() - event.getPos().getX()) <= bannerTierRange && Math.abs(bannerClaimPos.getY() - BCCommonConfig.CLAIM_DEPTH.get()) <= event.getPos().getY() && Math.abs(bannerClaimPos.getZ() - event.getPos().getZ()) <= bannerTierRange;
                 boolean isOwner = player == bannerClaimBlockEntity.getOwner();
 
-                if (isWithinBannerRange && isOwner || bannerClaimBlockEntity.ownerGroup.contains(player.getUUID()))
+                if (isWithinBannerRange && !PlayerFlagManager.INSTANCE.isPlayerFlagged(player) && !isOwner && !bannerClaimBlockEntity.ownerGroup.contains(player.getUUID())) {
+                    player.displayClientMessage(Component.translatable("warn.banner_claim.not_flagged").withStyle(ChatFormatting.RED), false);
+                    event.setCanceled(true);
+                }
+
+                else if (isWithinBannerRange && isOwner || bannerClaimBlockEntity.ownerGroup.contains(player.getUUID()))
                     event.setCanceled(false);
 
                 else if (isWithinBannerRange && !bannerClaimBlockEntity.isFlagged) {

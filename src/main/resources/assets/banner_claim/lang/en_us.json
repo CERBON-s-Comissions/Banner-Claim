@@ -21,5 +21,6 @@
   "warn.banner_claim.protection_block": "You can’t use this block to protect the banner within a range of %s blocks in the xz direction and infinite range in the y direction. Use /bannerclaim showProtections to see all available protection blocks.",
   "warn.banner_claim.place_banner": "You need a clear area of %sx%s to place the banner, and it needs to have access to the sky. You can still have protection blocks around. Use /bannerclaim showProtections to see all available protection blocks.",
   "warn.banner_claim.place_banner_cooldown": "The banner is on cooldown. Please wait more %s seconds.",
-  "warn.banner_claim.break_block": "%s is not set to PVP. Thus you can't break blocks here."
+  "warn.banner_claim.break_block": "%s is not set to PVP. Thus you can't break blocks here.",
+  "warn.banner_claim.not_flagged": "You are not flagged to PVP, thus you can't break blocks in other claims."
 }
